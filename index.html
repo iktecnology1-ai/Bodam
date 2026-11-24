@@ -51,6 +51,56 @@
   .item .chev{margin-left:auto;width:16px;height:16px;color:#5d6f9c}
   .foot{margin-top:auto;font-size:11px;color:#6c7ca3;padding:10px;line-height:1.5}
 
+
+  /* Drawer (ChatGPT style) */
+  #drawer{padding:22px 0 0}
+  .dHead{display:flex;align-items:center;justify-content:space-between;padding:0 18px 14px}
+  .dHead h2{font-size:24px;font-weight:700;letter-spacing:.02em}
+  #dSearch{display:none;margin:0 18px 10px;background:#ffffff10;border:1px solid #ffffff1c;color:#fff;border-radius:12px;padding:11px 14px;font-size:15px;outline:none}
+  #dSearch.show{display:block}
+  #drawer .item{padding:14px 18px;border-radius:0;font-size:16px}
+  .dLabel{font-size:13px;color:#8ea3d6;padding:18px 18px 6px;font-weight:600}
+  #chatList,#pinList{flex:none}
+  #drawer{overflow-y:auto}
+  #menuItems{border-top:1px solid #ffffff10;margin-top:6px;padding-top:4px}
+  .chatSub{display:block;font-size:11px;color:#6b9bff;margin-top:2px}
+  #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1b2940;color:#fff;padding:11px 18px;border-radius:999px;font-size:14px;z-index:60;display:none;border:1px solid #ffffff20;max-width:88vw;text-align:center}
+  .chatRow{display:block;width:100%;text-align:left;background:none;border:none;color:#e6edff;font-size:16px;padding:13px 18px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chatRow.cur{background:#ffffff12}
+  .chatRow:active{background:#ffffff0f}
+  .dEmpty{padding:8px 18px;color:#6c7ca3;font-size:14px}
+  .dBottom{position:sticky;margin-top:auto;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;padding:12px 18px 20px;background:linear-gradient(0deg,#0a111f 70%,#0a111f00)}
+  #dChat{display:flex;align-items:center;gap:10px;background:#2f6bff;color:#fff;border:none;border-radius:999px;padding:14px 24px;font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 6px 22px #2f6bff55}
+  #dAvatar,.avatar{width:46px;height:46px;border-radius:50%;background:#2a8de0;color:#fff;display:grid;place-items:center;font-weight:600;font-size:16px;overflow:hidden;border:1px solid #ffffff30;cursor:pointer;flex-shrink:0}
+  #dAvatar img,.avatar img{width:100%;height:100%;object-fit:cover}
+  /* 3-dot menu */
+  #moreMenu{position:fixed;top:68px;right:16px;min-width:230px;background:#111a2d;border:1px solid #ffffff1a;border-radius:16px;padding:6px;box-shadow:0 14px 40px #000c;z-index:40;display:none}
+  #moreMenu.open{display:block}
+  #moreMenu .item{padding:13px 12px;font-size:16px}
+  #moreMenu .mTitle{padding:10px 12px 6px;font-size:13px;color:#8ea3d6;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #moreMenu .item.out{color:#ff8d8d}#moreMenu .item.out .ic{color:#ff8d8d}
+  #moreMenu hr{border:none;border-top:1px solid #ffffff12;margin:4px 6px}
+  /* Account sheet */
+  #accSheet{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:#111a2d;border-top-left-radius:22px;border-top-right-radius:22px;border:1px solid #ffffff1a;padding:22px 20px 26px;z-index:41;display:none}
+  #accSheet.open{display:block}
+  .accTop{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  .accTop b{display:block;font-size:17px}.accTop span{font-size:13px;color:#8ea3d6;word-break:break-all}
+
+  /* Onboarding */
+  #onboard{position:fixed;inset:0;z-index:12;display:none;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 50% 0%,#12306a66,transparent 60%),#05080d}
+  #onboard.show{display:flex}
+  .obBox{width:min(100%,380px)}
+  .obDots{display:flex;gap:8px;margin-bottom:34px}
+  .obDots i{height:4px;flex:1;border-radius:4px;background:#ffffff1a}
+  .obDots i.on{background:#4a86ff}
+  .obStep h2{font-size:28px;line-height:1.2;font-weight:750;margin-bottom:8px}
+  .obStep p{color:#9db4ee;font-size:15px;margin-bottom:26px}
+  .obStep input{width:100%;background:#ffffff10;border:1px solid #ffffff22;color:#fff;border-radius:16px;padding:17px 18px;font-size:19px;outline:none}
+  .obStep input:focus{border-color:#4a86ff}
+  .obErr{min-height:22px;color:#ff8d8d;font-size:13px;margin:8px 4px 10px}
+  .obBtn{width:100%;padding:16px;border:none;border-radius:16px;background:linear-gradient(115deg,#5b95ff,#2f6bff);color:#fff;font-size:17px;font-weight:650;cursor:pointer;box-shadow:0 8px 26px #2f6bff55}
+  .obBack{width:100%;margin-top:10px;padding:14px;border:none;background:none;color:#9db4ee;font-size:15px;cursor:pointer}
+
   /* Pages */
   #page{position:fixed;inset:0;background:#070c16;z-index:30;display:none;flex-direction:column;max-width:480px;margin:0 auto}
   #page.open{display:flex}
@@ -93,15 +143,23 @@
   #homeOrbCanvas{width:100%;height:100%;display:block;filter:drop-shadow(0 0 16px #286fff88)}
   #getStarted{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:220px;min-height:58px;padding:17px 32px;border:1px solid rgba(174,239,255,.9);border-radius:18px;color:#041426;background:linear-gradient(115deg,#c7fbff 0%,#70d2ff 48%,#9daeff 100%);font-size:14px;font-weight:900;letter-spacing:.16em;text-decoration:none;box-shadow:0 0 18px #32bfff55,0 0 42px #287bff30,inset 0 1px 0 #ffffffcc,0 8px 24px #0009;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;cursor:pointer;overflow:hidden}
   #getStarted:before{content:"";position:absolute;inset:1px;border-radius:17px;border:1px solid #ffffff70;pointer-events:none}#getStarted:active{transform:translateY(1px) scale(.985);filter:brightness(.96);box-shadow:0 0 24px #32bfff66,inset 0 2px 8px #164a8a33}
-  #googleSignIn{display:inline-flex;align-items:center;justify-content:center;gap:12px;width:min(100%,220px);min-height:52px;margin-top:13px;padding:13px 20px;border:1px solid #aabbd733;border-radius:16px;color:#edf3ff;background:linear-gradient(180deg,#151d2c,#0b111c);font-size:13px;font-weight:650;letter-spacing:.025em;box-shadow:inset 0 1px 0 #ffffff12,0 8px 22px #0008;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+  #googleSignIn{display:inline-flex;align-items:center;justify-content:center;gap:12px;width:min(100%,300px);min-height:56px;margin-top:0;padding:13px 20px;border:1px solid #aabbd733;border-radius:16px;color:#edf3ff;background:linear-gradient(180deg,#151d2c,#0b111c);font-size:13px;font-weight:650;letter-spacing:.025em;box-shadow:inset 0 1px 0 #ffffff12,0 8px 22px #0008;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
   #googleSignIn:active{transform:scale(.98);background:#1b2940}
   #googleSignIn .gmark{font-family:Arial,sans-serif;font-size:19px;font-weight:800;line-height:1;background:conic-gradient(from -45deg,#4285f4 0 25%,#34a853 25% 50%,#fbbc05 50% 75%,#ea4335 75% 100%);background-clip:text;-webkit-background-clip:text;color:transparent}
+
+
+  /* Google button - clean, professional */
+  #googleSignIn{width:min(100%,320px);min-height:54px;margin-top:0;padding:0 22px;gap:12px;border:1px solid #dadce0;border-radius:12px;background:#fff;color:#3c4043;font-family:Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;font-weight:500;letter-spacing:.2px;box-shadow:0 2px 10px #0006}
+  #googleSignIn:active{background:#f1f3f4;transform:scale(.985)}
+  #googleSignIn .gLogo{width:22px;height:22px;flex-shrink:0}
 
   .homeHint{margin-top:14px;color:#8199bd;font-size:11px;letter-spacing:.07em}
   .homeFeatures{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:25px}
   .homeFeature{padding:8px 11px;border:1px solid #7abaff2c;background:#0b1935b8;border-radius:30px;color:#c0d2ed;font-size:9px;letter-spacing:.1em}
   .homeFooter{position:relative;z-index:1;color:#647fa7;font-size:9px;letter-spacing:.2em}
   .app{display:none}
+  #homeScreen .homeHero{justify-content:center}
+  #homeScreen .homeOrbStage{margin-bottom:26px}
   .app.homeStarted{display:flex}
   @media(max-height:700px){#homeScreen{padding-top:16px;padding-bottom:17px}.homeOrbStage{width:min(62vw,245px);height:min(62vw,245px)}.homeFeatures{margin-top:15px}.homeTitle{font-size:clamp(32px,7vw,48px)}}
   @media(prefers-reduced-motion:reduce){#homeScreen:before,#homeScreen:after{animation:none!important}}
@@ -114,6 +172,10 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <g id="common" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></g>
+    <symbol id="i-dots" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
     <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></symbol>
@@ -151,23 +213,38 @@
     <div class="homeOrbStage" aria-label="Animated blue holographic energy orb">
       <canvas id="homeOrbCanvas" width="640" height="640"></canvas>
     </div>
-    <button id="getStarted" type="button">GET STARTED</button>
-    <button id="googleSignIn" type="button"><span class="gmark" aria-hidden="true">G</span><span>Continue with Google</span></button>
+    <button id="googleSignIn" type="button"><svg class="gLogo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Sign in with Google</span></button>
 
-    <div class="homeFeatures">
-      <span class="homeFeature">✧ VOICE ASSISTANT</span>
-      <span class="homeFeature">✧ SMART CHAT</span>
-      <span class="homeFeature">✧ QUICK ACTIONS</span>
-    </div>
   </div>
   <div class="homeFooter">BODAM &nbsp; • &nbsp; YOUR AI ASSISTANT</div>
+</section>
+
+<!-- Onboarding: name -> age -->
+<section id="onboard" aria-label="Setup">
+  <div class="obBox">
+    <div class="obDots"><i class="on" id="d1"></i><i id="d2"></i></div>
+    <div id="obStep1" class="obStep">
+      <h2>What's your name?</h2>
+      <p>BODAM will call you by this name.</p>
+      <input id="obName" type="text" placeholder="Enter your name" autocomplete="name" maxlength="40">
+      <div class="obErr" id="obErr1"></div>
+      <button class="obBtn" id="obNext" type="button">Next</button>
+    </div>
+    <div id="obStep2" class="obStep" style="display:none">
+      <h2>How old are you?</h2>
+      <p>This helps BODAM tailor its replies to you.</p>
+      <input id="obAge" type="number" inputmode="numeric" placeholder="Age" min="3" max="120">
+      <div class="obErr" id="obErr2"></div>
+      <button class="obBtn" id="obDone" type="button">Continue</button>
+      <button class="obBack" id="obBack" type="button">Back</button>
+    </div>
+  </div>
 </section>
 
 <div class="app" id="assistantApp">
   <div class="top">
     <div class="round" id="menuBtn" aria-label="Menu"><svg class="ic"><use href="#i-menu"/></svg></div>
-    <div class="pill" id="pill">BODAM<small>Beta</small></div>
-    <div class="round" id="reset" aria-label="New chat"><svg class="ic"><use href="#i-refresh"/></svg></div>
+    <div class="round" id="moreBtn" aria-label="More options"><svg class="ic"><use href="#i-dots"/></svg></div>
   </div>
 
   <canvas id="orb" width="640" height="640"></canvas>
@@ -192,10 +269,22 @@
 <!-- Side menu -->
 <div id="scrim"></div>
 <nav id="drawer">
-  <div class="brand"><div class="logo">IK</div><div><b>BODAM</b><span>Voice Assistant &middot; v1.0 Beta</span></div></div>
+  <div class="dHead"><h2>BODAM</h2><div class="round" id="dSearchBtn" aria-label="Search chats"><svg class="ic"><use href="#i-search"/></svg></div></div>
+  <input id="dSearch" type="text" placeholder="Search chats" autocomplete="off">
+  <button class="item" id="dNew"><svg class="ic"><use href="#i-edit"/></svg><span>New chat</span></button>
   <div id="menuItems"></div>
-  <div class="foot">&copy; <span id="yr"></span> IK Technology<br>All rights reserved.</div>
+  <div class="dLabel" id="pinLabel" style="display:none">Pinned</div>
+  <div id="pinList"></div>
+  <div class="dLabel">Recents</div>
+  <div id="chatList"></div>
+  <div class="dBottom">
+    <button id="dChat" type="button"><svg class="ic"><use href="#i-edit"/></svg>Chat</button>
+    <div id="dAvatar" role="button" aria-label="Google account"></div>
+  </div>
 </nav>
+<div id="moreMenu"></div>
+<div id="toast"></div>
+<div id="accSheet"></div>
 
 <!-- Info / settings page -->
 <div id="page">
@@ -207,6 +296,18 @@
 /* ===== Config ===== */
 const SUPPORT_EMAIL = "support@example.com";   // <-- apni email yahan daalo
 const APP_VERSION = "1.0 Beta";
+// Paste the OAuth Client ID (Web application) from Google Cloud Console > APIs & Services > Credentials here.
+// Add this to Authorized JavaScript origins: https://iktecnology1-ai.github.io
+const GOOGLE_CLIENT_ID = "";
+
+// FIREBASE (recommended): Firebase Console > Project settings > Your apps > Web app > Config. Paste the values here.
+// Also enable Authentication > Sign-in method > Google, and add iktecnology1-ai.github.io under Authentication > Settings > Authorized domains.
+const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  appId: ""
+};
 
 const $ = id => document.getElementById(id);
 const ic = n => `<svg class="ic"><use href="#${n}"/></svg>`;
@@ -409,7 +510,7 @@ async function ask(q){
     res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,{
     method:"POST", headers:{"Content-Type":"application/json","x-goog-api-key":KEY},
     body: JSON.stringify({
-      systemInstruction:{parts:[{text:"You are BODAM, a friendly Hindi and English voice assistant. Follow the user's requests. Reply in the same language and style the user speaks. Keep answers short (1-3 sentences), no markdown, no emojis."}]},
+      systemInstruction:{parts:[{text:"You are BODAM, a friendly Hindi and English voice assistant. Follow the user's requests. Reply in the same language and style the user speaks. Keep answers short (1-3 sentences), no markdown, no emojis." + (profile ? " The user's name is " + profile.name + " and their age is " + profile.age + "." : "")}]},
       contents: history.slice(-12)
     })
     });
@@ -424,6 +525,7 @@ async function ask(q){
   if(!res.ok){ history.pop(); throw new Error(data.error?.message || "API error"); }
   const a = data.candidates?.[0]?.content?.parts?.map(p=>p.text).join("") || "Sorry, I didn't catch that.";
   history.push({role:"model", parts:[{text:a}]});
+  saveChat();
   return a;
 }
 
@@ -555,6 +657,8 @@ const MENU = [
   ["i-file","Terms of Use",pageTerms],
   ["i-info","About",pageAbout]
 ];
+function closeMore(){ $("moreMenu").classList.remove("open"); }
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.display="block"; clearTimeout(toast.h); toast.h=setTimeout(()=>t.style.display="none",2400); }
 MENU.forEach(([icon,label,fn]) => {
   const b = document.createElement("button");
   b.className = "item";
@@ -562,28 +666,244 @@ MENU.forEach(([icon,label,fn]) => {
   b.onclick = fn;
   $("menuItems").appendChild(b);
 });
-$("yr").textContent = new Date().getFullYear();
+const I = {
+  pin:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 3h6l-1 7 3 3v2H7v-2l3-3z"/></svg>',
+  share:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>',
+  rename:ic("i-edit"),
+  project:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  home:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>',
+  del:ic("i-trash")
+};
+let deferredInstall = null;
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; });
+function curObj(){ return chats.find(x => x.id === curChat); }
+function needChat(){ const c = curObj(); if(!c) toast("Start a chat first"); return c; }
+function buildMore(){
+  const c = curObj();
+  const m = $("moreMenu");
+  m.innerHTML = `<div class="mTitle">${esc(c ? c.title : "New chat")}</div>`;
+  const acts = [
+    [I.pin, c && c.pinned ? "Unpin" : "Pin", () => { const c=needChat(); if(!c) return; c.pinned=!c.pinned; persistChats(); renderChats(); toast(c.pinned?"Pinned":"Unpinned"); }],
+    [I.share,"Share", async () => {
+      const c=needChat(); if(!c) return;
+      const text = c.msgs.map(h => (h.role==="user"?"You: ":"BODAM: ")+h.parts[0].text).join("\n\n");
+      try{ if(navigator.share){ await navigator.share({title:c.title, text}); return; } }catch(e){ return; }
+      try{ await navigator.clipboard.writeText(text); toast("Chat copied"); }catch(e){ toast("Sharing is not supported in this browser"); }
+    }],
+    [I.rename,"Rename", () => { const c=needChat(); if(!c) return; const n=prompt("New chat name:", c.title); if(n && n.trim()){ c.title=n.trim().slice(0,60); persistChats(); renderChats(); } }],
+    [I.project,"Add to project", () => { const c=needChat(); if(!c) return; const n=prompt("Project name:", c.project||""); if(n!==null){ c.project=n.trim(); persistChats(); renderChats(); toast(c.project?"Added to project":"Removed from project"); } }],
+    [I.home,"Add to home", async () => {
+      if(deferredInstall){ deferredInstall.prompt(); deferredInstall=null; }
+      else alert("Open Chrome's 3-dot menu and tap 'Add to Home screen'.");
+    }],
+    [I.del,"Delete", () => { const c=needChat(); if(!c) return; if(confirm("Delete this chat?")){ chats=chats.filter(x=>x.id!==c.id); persistChats(); history=[]; curChat=null; $("said").textContent="Chat deleted."; renderChats(); toast("Deleted"); } }, true]
+  ];
+  acts.forEach(([icon,label,fn,danger]) => {
+    const b = document.createElement("button");
+    b.className = "item" + (danger ? " out" : "");
+    b.innerHTML = icon + `<span>${label}</span>`;
+    b.onclick = () => { closeMore(); fn(); };
+    m.appendChild(b);
+  });
+}
 
-/* ===== Home screen ===== */
-$("getStarted").onclick = () => {
+/* ===== Saved chats ===== */
+let chats = [], curChat = null;
+try{ chats = JSON.parse(store.get("bodam_chats","[]")) || []; }catch(e){ chats = []; }
+function persistChats(){ store.set("bodam_chats", JSON.stringify(chats.slice(0,40))); }
+function saveChat(){
+  if(!history.length) return;
+  let c = chats.find(x => x.id === curChat);
+  if(!c){
+    curChat = "c" + Date.now();
+    const first = history.find(h => h.role === "user");
+    c = { id:curChat, title:(first ? first.parts[0].text : "New chat").slice(0,40), msgs:[] };
+    chats.unshift(c);
+  }
+  c.msgs = history.slice(-40);
+  persistChats(); renderChats();
+}
+function newChat(){
+  history = []; curChat = null;
+  $("said").textContent = "New chat started. Go ahead!";
+  renderChats(); openDrawer(false);
+}
+function renderChats(){
+  const q = $("dSearch").value.trim().toLowerCase();
+  const list = chats.filter(c => !q || c.title.toLowerCase().includes(q));
+  const pins = list.filter(c => c.pinned), rest = list.filter(c => !c.pinned);
+  $("pinLabel").style.display = pins.length ? "block" : "none";
+  const mk = (c, box) => {
+    const b = document.createElement("button");
+    b.className = "chatRow" + (c.id === curChat ? " cur" : "");
+    b.innerHTML = esc(c.title) + (c.project ? `<span class="chatSub">${esc(c.project)}</span>` : "");
+    b.onclick = () => {
+      history = c.msgs.slice(); curChat = c.id;
+      const last = history[history.length-1];
+      $("said").textContent = last ? last.parts[0].text : "Tap the mic and start talking.";
+      renderChats(); openDrawer(false);
+    };
+    box.appendChild(b);
+  };
+  $("pinList").innerHTML = ""; pins.forEach(c => mk(c, $("pinList")));
+  const box = $("chatList"); box.innerHTML = "";
+  if(!rest.length && !pins.length){ box.innerHTML = `<div class="dEmpty">${q ? "No chats found" : "No chats yet"}</div>`; return; }
+  rest.forEach(c => mk(c, box));
+}
+$("dNew").onclick = newChat;
+$("dChat").onclick = newChat;
+$("dSearchBtn").onclick = () => { const i = $("dSearch"); i.classList.toggle("show"); if(i.classList.contains("show")) i.focus(); else { i.value=""; renderChats(); } };
+$("dSearch").oninput = renderChats;
+renderChats();
+$("yr") && ($("yr").textContent = new Date().getFullYear());
+
+/* ===== Google sign-in ===== */
+let user = null;
+try{ user = JSON.parse(store.get("bodam_user","null")); }catch(e){ user = null; }
+
+function avatarHTML(u){
+  if(u && u.picture) return `<img src="${esc(u.picture)}" alt="" referrerpolicy="no-referrer">`;
+  const n = (u && (u.name || u.email)) || "?";
+  return esc(n.split(/\s+/).map(w => w[0]).join("").slice(0,2).toUpperCase());
+}
+let profile = null;
+try{ profile = JSON.parse(store.get("bodam_profile","null")); }catch(e){ profile = null; }
+function profileOK(){ return profile && user && profile.email === user.email && profile.name && profile.age; }
+function showOnboard(){
+  $("homeScreen").style.display = "none";
+  $("assistantApp").classList.remove("homeStarted");
+  $("obName").value = (profile && profile.email === (user && user.email) && profile.name) || (user && user.name) || "";
+  $("obAge").value = "";
+  $("obStep1").style.display = "block"; $("obStep2").style.display = "none";
+  $("d1").className = "on"; $("d2").className = "";
+  $("obErr1").textContent = $("obErr2").textContent = "";
+  $("onboard").classList.add("show");
+  setTimeout(() => $("obName").focus(), 100);
+}
+$("obNext").onclick = () => {
+  const n = $("obName").value.trim();
+  if(n.length < 2){ $("obErr1").textContent = "Please enter your name."; return; }
+  $("obErr1").textContent = "";
+  $("obStep1").style.display = "none"; $("obStep2").style.display = "block";
+  $("d2").className = "on"; $("obAge").focus();
+};
+$("obBack").onclick = () => { $("obStep2").style.display = "none"; $("obStep1").style.display = "block"; $("d2").className = ""; };
+$("obDone").onclick = () => {
+  const a = parseInt($("obAge").value, 10);
+  if(!(a >= 3 && a <= 120)){ $("obErr2").textContent = "Please enter a valid age (3 to 120)."; return; }
+  profile = { email:(user && user.email) || "", name:$("obName").value.trim(), age:a };
+  store.set("bodam_profile", JSON.stringify(profile));
+  $("onboard").classList.remove("show");
+  enterApp();
+};
+$("obName").oninput = () => $("obErr1").textContent = "";
+$("obAge").oninput = () => $("obErr2").textContent = "";
+$("obName").onkeydown = e => { if(e.key === "Enter") $("obNext").click(); };
+$("obAge").onkeydown = e => { if(e.key === "Enter") $("obDone").click(); };
+
+function enterApp(){
+  if(!profileOK()){ showOnboard(); return; }
   $("homeScreen").style.display = "none";
   $("assistantApp").classList.add("homeStarted");
+  $("dAvatar").innerHTML = avatarHTML(user);
+  $("said").textContent = "Hello " + profile.name + "! Tap the mic and start talking.";
   if(!KEY) pageSettings();
+}
+function signOut(){
+  user = null; store.set("bodam_user","null");
+  try{ if(window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect(); }catch(e){}
+  try{ if(window.firebase && firebase.apps.length) firebase.auth().signOut(); }catch(e){}
+  history = []; curChat = null; renderChats();
+  $("accSheet").classList.remove("open"); openDrawer(false);
+  $("assistantApp").classList.remove("homeStarted");
+  $("onboard").classList.remove("show");
+  $("homeScreen").style.display = "flex";
+}
+function loadGsi(){
+  return new Promise((ok, fail) => {
+    if(window.google && google.accounts && google.accounts.oauth2) return ok();
+    const sc = document.createElement("script");
+    sc.src = "https://accounts.google.com/gsi/client"; sc.async = true;
+    sc.onload = ok; sc.onerror = () => fail(new Error("Could not load Google sign-in. Check your internet connection."));
+    document.head.appendChild(sc);
+  });
+}
+function loadScript(src){
+  return new Promise((ok, fail) => {
+    const sc = document.createElement("script");
+    sc.src = src; sc.async = true; sc.onload = ok; sc.onerror = () => fail(new Error("Could not load " + src));
+    document.head.appendChild(sc);
+  });
+}
+async function firebaseSignIn(){
+  try{
+    if(!window.firebase){
+      await loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
+      await loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js");
+    }
+    if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    const res = await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    const u = res.user;
+    user = { name:u.displayName || "", email:u.email || "", picture:u.photoURL || "" };
+    store.set("bodam_user", JSON.stringify(user));
+    enterApp();
+  }catch(e){
+    if(e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")) return;
+    if(e && e.code === "auth/unauthorized-domain") alert("Add iktecnology1-ai.github.io in Firebase Console > Authentication > Settings > Authorized domains.");
+    else if(e && e.code === "auth/operation-not-allowed") alert("Enable Google in Firebase Console > Authentication > Sign-in method.");
+    else alert("Sign-in failed: " + (e && e.message ? e.message : e));
+  }
+}
+$("googleSignIn").onclick = async () => {
+  if(FIREBASE_CONFIG.apiKey){ return firebaseSignIn(); }
+  if(!GOOGLE_CLIENT_ID){
+    alert("Google sign-in is not set up yet.\n\nPaste your Firebase config into FIREBASE_CONFIG in index.html.");
+    return;
+  }
+  try{
+    await loadGsi();
+    const tc = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: "openid email profile",
+      callback: async resp => {
+        if(resp.error || !resp.access_token){ alert("Google sign-in was cancelled or failed."); return; }
+        try{
+          const r = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", { headers:{ Authorization:"Bearer " + resp.access_token } });
+          const p = await r.json();
+          user = { name:p.name || "", email:p.email || "", picture:p.picture || "" };
+          store.set("bodam_user", JSON.stringify(user));
+          enterApp();
+        }catch(e){ alert("Could not load your profile: " + e.message); }
+      },
+      error_callback: () => alert("The Google sign-in popup was closed.")
+    });
+    tc.requestAccessToken({ prompt:"select_account" });
+  }catch(e){ alert(e.message); }
 };
-$("googleSignIn").onclick = () => { alert("Google sign-in is not connected yet. To enable secure sign-in, this app needs Google OAuth client configuration."); };
+$("dAvatar").onclick = () => {
+  $("accSheet").innerHTML = `<div class="accTop"><div class="avatar">${avatarHTML(user)}</div><div><b>${esc((profile && profile.name) || (user && user.name) || "Guest")}</b><span>${esc((user && user.email) || "")}${profile && profile.age ? " · Age " + profile.age : ""}</span></div></div>
+    <button class="btn ghost" id="accOut">${ic("i-logout")}Sign out</button>`;
+  $("accSheet").classList.add("open");
+  $("accOut").onclick = signOut;
+};
+if(user) enterApp();
 
 /* ===== UI events ===== */
 $("menuBtn").onclick = () => openDrawer(true);
 $("scrim").onclick = () => openDrawer(false);
 $("pback").onclick = closePage;
-$("pill").onclick = pageSettings;
+$("moreBtn").onclick = e => { e.stopPropagation(); buildMore(); $("moreMenu").classList.toggle("open"); };
+document.addEventListener("click", e => {
+  if(!e.target.closest("#moreMenu")) closeMore();
+  if(!e.target.closest("#accSheet") && !e.target.closest("#dAvatar")) $("accSheet").classList.remove("open");
+});
 $("mic").onclick = () => { if(state === "listening"){ rec && rec.stop(); } else listen(); };
 $("stop").onclick = () => { stopSpeech(); try { if (rec) rec.abort(); } catch(err) {} setState("idle"); };
 $("spk").onclick = () => { muted = !muted; store.set("ik_muted", muted?"1":"0"); syncSpk(); if(muted) stopSpeech(); };
 $("kb").onclick = () => { const s = $("typebar").classList.toggle("show"); document.body.classList.toggle("typing", s); if(s) $("txt").focus(); };
 $("send").onclick = () => { const v = $("txt").value.trim(); if(v){ $("txt").value=""; handle(v); } };
 $("txt").onkeydown = e => { if(e.key === "Enter") $("send").click(); };
-$("reset").onclick = () => { history = []; $("said").textContent = "New chat started. Go ahead!"; };
+
 
 /* ===== Orb + waveform ===== */
 const orb = $("orb"), oc = orb.getContext("2d");
