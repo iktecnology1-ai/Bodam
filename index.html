@@ -70,7 +70,7 @@
   .chatRow:active{background:#ffffff0f}
   .dEmpty{padding:8px 18px;color:#6c7ca3;font-size:14px}
   .dBottom{position:sticky;margin-top:auto;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;padding:12px 18px 20px;background:linear-gradient(0deg,#0a111f 70%,#0a111f00)}
-  #dChat{display:flex;align-items:center;gap:10px;background:#2f6bff;color:#fff;border:none;border-radius:999px;padding:14px 24px;font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 6px 22px #2f6bff55}
+  #dChat{display:flex;align-items:center;gap:10px;background:#f6f4ef;color:#141414;border:none;border-radius:999px;padding:14px 26px;font-size:17px;font-weight:600;cursor:pointer;box-shadow:0 6px 22px #0008}
   #dAvatar,.avatar{width:46px;height:46px;border-radius:50%;background:#2a8de0;color:#fff;display:grid;place-items:center;font-weight:600;font-size:16px;overflow:hidden;border:1px solid #ffffff30;cursor:pointer;flex-shrink:0}
   #dAvatar img,.avatar img{width:100%;height:100%;object-fit:cover}
   /* 3-dot menu */
@@ -81,10 +81,29 @@
   #moreMenu .item.out{color:#ff8d8d}#moreMenu .item.out .ic{color:#ff8d8d}
   #moreMenu hr{border:none;border-top:1px solid #ffffff12;margin:4px 6px}
   /* Account sheet */
-  #accSheet{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:#111a2d;border-top-left-radius:22px;border-top-right-radius:22px;border:1px solid #ffffff1a;padding:22px 20px 26px;z-index:41;display:none}
+  #accSheet{max-height:82vh;overflow-y:auto;position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:#111a2d;border-top-left-radius:22px;border-top-right-radius:22px;border:1px solid #ffffff1a;padding:22px 20px 26px;z-index:41;display:none}
   #accSheet.open{display:block}
   .accTop{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  #accSheet .item{padding:14px 6px;font-size:16px}
+  #accSheet .item.out,#accSheet .item.out .ic{color:#ff8d8d}
+  #accSheet hr{border:none;border-top:1px solid #ffffff12;margin:8px 0}
   .accTop b{display:block;font-size:17px}.accTop span{font-size:13px;color:#8ea3d6;word-break:break-all}
+
+
+  /* Settings page (Claude-style) */
+  .sProfile{display:flex;align-items:center;gap:14px;padding:6px 4px 18px}
+  .sProfile .avatar{width:58px;height:58px;font-size:20px;cursor:default}
+  .sProfile b{display:block;font-size:18px;color:#fff}.sProfile span{font-size:13px;color:#8ea3d6;word-break:break-all}
+  .sGroup{background:#111a2d;border:1px solid #ffffff0d;border-radius:20px;margin-bottom:14px;overflow:hidden}
+  .sRow{display:flex;align-items:center;gap:16px;width:100%;padding:17px 18px;background:none;border:none;border-bottom:1px solid #ffffff0a;color:#eaf0ff;font-size:17px;text-align:left;cursor:pointer}
+  .sRow:last-child{border-bottom:none}
+  .sRow:active{background:#ffffff0c}
+  .sRow .ic{width:24px;height:24px;color:#cfd9f5}
+  .sRow .chev{margin-left:auto;width:16px;height:16px;color:#5d6f9c}
+  .sRow.out,.sRow.out .ic{color:#ff8d8d}
+  .sSwitch{margin-left:auto;width:52px;height:30px;border-radius:999px;background:#ffffff22;position:relative;transition:background .2s;flex-shrink:0}
+  .sSwitch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
+  .sSwitch.on{background:#2f6bff}.sSwitch.on::after{transform:translateX(22px)}
 
   /* Onboarding */
   #onboard{position:fixed;inset:0;z-index:12;display:none;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 50% 0%,#12306a66,transparent 60%),#05080d}
@@ -100,6 +119,9 @@
   .obErr{min-height:22px;color:#ff8d8d;font-size:13px;margin:8px 4px 10px}
   .obBtn{width:100%;padding:16px;border:none;border-radius:16px;background:linear-gradient(115deg,#5b95ff,#2f6bff);color:#fff;font-size:17px;font-weight:650;cursor:pointer;box-shadow:0 8px 26px #2f6bff55}
   .obBack{width:100%;margin-top:10px;padding:14px;border:none;background:none;color:#9db4ee;font-size:15px;cursor:pointer}
+
+  #actLink{min-height:0}
+  .actBtn{display:inline-flex;align-items:center;gap:8px;margin-top:4px;padding:11px 20px;border-radius:999px;background:#2f6bff;color:#fff;font-size:15px;font-weight:600;text-decoration:none;box-shadow:0 6px 22px #2f6bff55}
 
   /* Pages */
   #page{position:fixed;inset:0;background:#070c16;z-index:30;display:none;flex-direction:column;max-width:480px;margin:0 auto}
@@ -252,6 +274,7 @@
   <div class="text">
     <div id="said">Tap the mic and start talking.</div>
     <div id="status"><span class="bars"><i></i><i></i><i></i><i></i></span><span id="stxt">Tap mic to talk</span></div>
+    <div id="actLink"></div>
   </div>
 
   <div class="dock">
@@ -271,15 +294,13 @@
 <nav id="drawer">
   <div class="dHead"><h2>BODAM</h2><div class="round" id="dSearchBtn" aria-label="Search chats"><svg class="ic"><use href="#i-search"/></svg></div></div>
   <input id="dSearch" type="text" placeholder="Search chats" autocomplete="off">
-  <button class="item" id="dNew"><svg class="ic"><use href="#i-edit"/></svg><span>New chat</span></button>
-  <div id="menuItems"></div>
   <div class="dLabel" id="pinLabel" style="display:none">Pinned</div>
   <div id="pinList"></div>
   <div class="dLabel">Recents</div>
   <div id="chatList"></div>
   <div class="dBottom">
-    <button id="dChat" type="button"><svg class="ic"><use href="#i-edit"/></svg>Chat</button>
-    <div id="dAvatar" role="button" aria-label="Google account"></div>
+    <div id="dAvatar" role="button" aria-label="Account and settings"></div>
+    <button id="dChat" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New chat</button>
   </div>
 </nav>
 <div id="moreMenu"></div>
@@ -294,8 +315,10 @@
 
 <script>
 /* ===== Config ===== */
-const SUPPORT_EMAIL = "support@example.com";   // <-- apni email yahan daalo
+const SUPPORT_EMAIL = "iktecnology1@gmail.com";
 const APP_VERSION = "1.0 Beta";
+const TTS_MODEL = "gemini-3.1-flash-tts-preview";   // human-like voice (uses your Gemini API key)
+const VOICE_MALE = "Charon", VOICE_FEMALE = "Kore";
 // Paste the OAuth Client ID (Web application) from Google Cloud Console > APIs & Services > Credentials here.
 // Add this to Authorized JavaScript origins: https://iktecnology1-ai.github.io
 const GOOGLE_CLIENT_ID = "";
@@ -345,11 +368,111 @@ const speechEngine = ("speechSynthesis" in window) ? window.speechSynthesis : nu
 const Utterance = window.SpeechSynthesisUtterance || null;
 let rec = null;
 
+let audioCtx = null, ttsNode = null, ttsToken = 0;
+function ensureAudio(){
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    if(!audioCtx) audioCtx = new AC();
+    if(audioCtx.state === "suspended") audioCtx.resume();
+  }catch(e){}
+}
 function stopSpeech(){
+  ttsToken++;
+  try{ if(ttsNode){ ttsNode.onended = null; ttsNode.stop(); } }catch(e){}
+  ttsNode = null;
   try { if (speechEngine) speechEngine.cancel(); } catch(err) {}
 }
 
+/* Records with the microphone (no Chrome "tu-tu" beeps), then Gemini turns the audio into text. */
+let recStop = null, recAborted = false;
+function abortListen(){ recAborted = true; if(recStop) recStop(); try{ if(rec) rec.abort(); }catch(e){} }
+function wavBase64(chunks, inRate){
+  let len = 0; chunks.forEach(c => len += c.length);
+  const all = new Float32Array(len); let o = 0;
+  chunks.forEach(c => { all.set(c, o); o += c.length; });
+  const ratio = inRate / 16000, outLen = Math.floor(len / ratio);
+  const pcm = new Int16Array(outLen);
+  for(let i = 0; i < outLen; i++){
+    const st = Math.floor(i * ratio), en = Math.max(st + 1, Math.floor((i + 1) * ratio));
+    let sum = 0, n = 0;
+    for(let j = st; j < en && j < len; j++){ sum += all[j]; n++; }
+    const v = Math.max(-1, Math.min(1, n ? sum / n : 0));
+    pcm[i] = v < 0 ? v * 32768 : v * 32767;
+  }
+  const buf = new ArrayBuffer(44 + pcm.length * 2), dv = new DataView(buf);
+  const w = (off, str) => { for(let i = 0; i < str.length; i++) dv.setUint8(off + i, str.charCodeAt(i)); };
+  w(0,"RIFF"); dv.setUint32(4, 36 + pcm.length * 2, true); w(8,"WAVE"); w(12,"fmt ");
+  dv.setUint32(16,16,true); dv.setUint16(20,1,true); dv.setUint16(22,1,true);
+  dv.setUint32(24,16000,true); dv.setUint32(28,32000,true); dv.setUint16(32,2,true); dv.setUint16(34,16,true);
+  w(36,"data"); dv.setUint32(40, pcm.length * 2, true);
+  new Int16Array(buf, 44).set(pcm);
+  const bytes = new Uint8Array(buf); let bin = "";
+  for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+async function transcribe(b64){
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+    method:"POST", headers:{"Content-Type":"application/json","x-goog-api-key":KEY},
+    body: JSON.stringify({ contents:[{ role:"user", parts:[
+      { inlineData:{ mimeType:"audio/wav", data:b64 } },
+      { text:"Transcribe the speech in this audio exactly as spoken. It may be Hindi, English or a mix. Write Hindi words in Roman letters (Hinglish), keep English words as they are. Output only the transcript. If there is no clear speech, output exactly: NO_SPEECH" }
+    ]}]})
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.error?.message || "Could not understand the audio");
+  return (data.candidates?.[0]?.content?.parts?.map(p => p.text).join("") || "").trim();
+}
+async function listenGemini(){
+  stopSpeech(); ensureAudio();
+  let stream;
+  try{ stream = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:true } }); }
+  catch(e){ setState("idle","Mic permission blocked. Allow microphone for this site in Chrome settings."); return; }
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AC();
+  const src = ctx.createMediaStreamSource(stream);
+  const proc = ctx.createScriptProcessor(4096, 1, 1);
+  const mute = ctx.createGain(); mute.gain.value = 0;
+  const chunks = []; let heard = false, silence = 0, total = 0, done = false;
+  recAborted = false;
+  setState("listening","Listening… speak now");
+  const finish = async () => {
+    if(done) return; done = true; recStop = null;
+    try{ proc.disconnect(); src.disconnect(); mute.disconnect(); }catch(e){}
+    stream.getTracks().forEach(t => t.stop());
+    const rate = ctx.sampleRate; try{ ctx.close(); }catch(e){}
+    if(recAborted){ return; }
+    if(!heard){ setState("idle","No speech detected. Tap mic and try again."); return; }
+    setState("thinking","Understanding…");
+    try{
+      const text = await transcribe(wavBase64(chunks, rate));
+      if(!text || /NO_SPEECH/.test(text)){ setState("idle","Could not hear that. Tap mic and try again."); return; }
+      handle(text);
+    }catch(e){ $("said").textContent = "Error: " + e.message; setState("idle"); }
+  };
+  recStop = finish;
+  proc.onaudioprocess = e => {
+    if(done) return;
+    const d = e.inputBuffer.getChannelData(0);
+    chunks.push(new Float32Array(d));
+    let sum = 0; for(let i = 0; i < d.length; i++) sum += d[i] * d[i];
+    const rms = Math.sqrt(sum / d.length), ms = d.length / ctx.sampleRate * 1000;
+    total += ms;
+    if(rms > 0.018){ heard = true; silence = 0; } else if(heard){ silence += ms; }
+    if((heard && silence > 1300) || total > 20000 || (!heard && total > 8000)) finish();
+  };
+  src.connect(proc); proc.connect(mute); mute.connect(ctx.destination);
+}
+
 function listen(){
+  if (!window.isSecureContext) {
+    setState("idle", "Mic needs HTTPS. Open BODAM from a secure https:// link.");
+    return;
+  }
+  if (KEY && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (window.AudioContext || window.webkitAudioContext)) return listenGemini();
+  return listenSR();
+}
+function listenSR(){
   if (!window.isSecureContext) {
     setState("idle", "Mic needs HTTPS. Open BODAM from a secure https:// link.");
     return;
@@ -414,7 +537,51 @@ function chooseSpeechVoice(lang){
     : /male|man|david|mark|daniel|alex|rishi|madhur|hemant/i;
   return pool.find(v => hints.test(v.name || "")) || pool.find(v => v.default) || pool[0];
 }
+async function speakGemini(text){
+  stopSpeech(); ensureAudio();
+  if(!audioCtx) throw new Error("no audio");
+  const my = ++ttsToken;
+  const male = VOICE_GENDER !== "female";
+  const style = male
+    ? "Speak in a deep, calm, warm, natural human male voice, like a real person talking, at a relaxed pace. Pronounce Hindi words naturally with an Indian accent."
+    : "Speak in a warm, soft, natural human female voice, like a real person talking, at a relaxed pace. Pronounce Hindi words naturally with an Indian accent.";
+  const clean = String(text).replace(/[*_`#]/g, "");
+  setState("thinking","Preparing voice…");
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent`, {
+    method:"POST", headers:{"Content-Type":"application/json","x-goog-api-key":KEY},
+    body: JSON.stringify({
+      contents:[{ parts:[{ text: style + "\n\n" + clean }] }],
+      generationConfig:{ responseModalities:["AUDIO"], speechConfig:{ voiceConfig:{ prebuiltVoiceConfig:{ voiceName: male ? VOICE_MALE : VOICE_FEMALE } } } }
+    })
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.error?.message || "TTS failed");
+  const part = (data.candidates?.[0]?.content?.parts || []).find(p => p.inlineData && p.inlineData.data);
+  if(!part) throw new Error("no audio returned");
+  if(my !== ttsToken) return;
+  const bin = atob(part.inlineData.data), n = bin.length >> 1;
+  const f32 = new Float32Array(n);
+  for(let i = 0; i < n; i++){
+    let v = bin.charCodeAt(2*i) | (bin.charCodeAt(2*i+1) << 8);
+    if(v >= 32768) v -= 65536;
+    f32[i] = v / 32768;
+  }
+  const buf = audioCtx.createBuffer(1, n, 24000);
+  buf.copyToChannel(f32, 0);
+  const node = audioCtx.createBufferSource();
+  node.buffer = buf; node.connect(audioCtx.destination);
+  node.onended = () => { if(my === ttsToken){ ttsNode = null; setState("idle"); } };
+  ttsNode = node; setState("speaking"); node.start();
+}
 function speak(text){
+  if (muted) { setState("idle"); return; }
+  if (KEY && VOICE_GENDER !== "auto") {
+    speakGemini(text).catch(() => speakBrowser(text));
+    return;
+  }
+  speakBrowser(text);
+}
+function speakBrowser(text){
   if (muted) { setState("idle"); return; }
   if (!speechEngine || !Utterance) {
     setState("idle", "Voice playback is unavailable in this browser. You can read the reply on screen.");
@@ -440,61 +607,168 @@ function speak(text){
 }
 function voiceStyleCommand(q){
   const t = String(q || "").toLowerCase();
-  if (/(female voice|woman voice|girl voice|ladki ki awaaz|ladki wali voice|female awaaz|महिला आवाज|लड़की की आवाज)/i.test(t)) {
-    VOICE_GENDER = "female"; store.set("bodam_voice_gender", VOICE_GENDER); return "Okay, I will speak in a female voice.";
+  const talk = /(voice|awaaz|awaz|aawaz|avaz|आवाज|baat|bat |bol|speak|talk|kaho|बात|बोल)/i.test(t);
+  if (!talk) return null;
+  if (/(female|feemale|femail|फीमेल|ladki|ladkiyon|girl|woman|mahila|लड़की|महिला)/i.test(t)) {
+    VOICE_GENDER = "female"; store.set("bodam_voice_gender", VOICE_GENDER); return "Sure, I'll talk in a female voice now.";
   }
-  if (/(male voice|man voice|boy voice|ladke ki awaaz|ladke wali voice|male awaaz|पुरुष आवाज|लड़के की आवाज)/i.test(t)) {
-    VOICE_GENDER = "male"; store.set("bodam_voice_gender", VOICE_GENDER); return "Okay, I will speak in a male voice.";
+  if (/(\bmale\b|\bman\b|\bboy\b|\bmen\b|ladka|ladke|aadmi|purush|मेल|लड़का|लड़के|पुरुष)/i.test(t)) {
+    VOICE_GENDER = "male"; store.set("bodam_voice_gender", VOICE_GENDER); return "Sure, I'll talk in a male voice now.";
   }
-  if (/(automatic voice|default voice|auto voice)/i.test(t)) {
+  if (/(automatic|default|auto)/i.test(t)) {
     VOICE_GENDER = "auto"; store.set("bodam_voice_gender", VOICE_GENDER); return "Okay, I will use the default voice.";
   }
   return null;
 }
 
 /* ===== Brain ===== */
-function localCommand(q){
+/* ===== App launching ===== */
+const APPS = [
+  ["YouTube","com.google.android.youtube",["youtube","you tube","यूट्यूब","yt"]],
+  ["WhatsApp","com.whatsapp",["whatsapp","whats app","व्हाट्सएप","वाट्सएप"]],
+  ["Instagram","com.instagram.android",["instagram","insta","इंस्टाग्राम"]],
+  ["Facebook","com.facebook.katana",["facebook","fb","फेसबुक"]],
+  ["Messenger","com.facebook.orca",["messenger"]],
+  ["Telegram","org.telegram.messenger",["telegram","टेलीग्राम"]],
+  ["Snapchat","com.snapchat.android",["snapchat","snap"]],
+  ["X","com.twitter.android",["twitter","x app"]],
+  ["Gmail","com.google.android.gm",["gmail","mail","जीमेल"]],
+  ["Google Maps","com.google.android.apps.maps",["google maps","maps","map","मैप"]],
+  ["Chrome","com.android.chrome",["chrome","क्रोम"]],
+  ["Google","com.google.android.googlequicksearchbox",["google"]],
+  ["Play Store","com.android.vending",["play store","playstore","प्ले स्टोर"]],
+  ["Spotify","com.spotify.music",["spotify"]],
+  ["Netflix","com.netflix.mediaclient",["netflix"]],
+  ["Amazon","in.amazon.mShop.android.shopping",["amazon"]],
+  ["Flipkart","com.flipkart.android",["flipkart"]],
+  ["Paytm","net.one97.paytm",["paytm"]],
+  ["PhonePe","com.phonepe.app",["phonepe","phone pe"]],
+  ["Google Pay","com.google.android.apps.nbu.paisa.user",["google pay","gpay","g pay"]],
+  ["Truecaller","com.truecaller",["truecaller"]],
+  ["Hotstar","in.startv.hotstar",["hotstar","disney hotstar"]],
+  ["Zomato","com.application.zomato",["zomato"]],
+  ["Swiggy","in.swiggy.android",["swiggy"]],
+  ["Google Photos","com.google.android.apps.photos",["photos","google photos","gallery"]],
+  ["Google Drive","com.google.android.apps.docs",["drive","google drive"]],
+  ["Google Meet","com.google.android.apps.tachyon",["meet","google meet"]],
+  ["Zoom","us.zoom.videomeet",["zoom"]],
+  ["ChatGPT","com.openai.chatgpt",["chatgpt","chat gpt"]],
+  ["Gemini","com.google.android.apps.bard",["gemini"]],
+  ["Claude","com.anthropic.claude",["claude"]],
+  ["Reddit","com.reddit.frontpage",["reddit"]],
+  ["LinkedIn","com.linkedin.android",["linkedin"]],
+  ["Pinterest","com.pinterest",["pinterest"]],
+  ["Discord","com.discord",["discord"]],
+  ["Uber","com.ubercab",["uber"]],
+  ["Ola","com.olacabs.customer",["ola"]]
+];
+function appIntent(pkg){
+  const fb = encodeURIComponent("https://play.google.com/store/apps/details?id=" + pkg);
+  return "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=" + pkg + ";S.browser_fallback_url=" + fb + ";end";
+}
+function clearLink(){ const el = $("actLink"); if(el) el.innerHTML = ""; }
+function setLink(href, label){
+  const el = $("actLink"); if(!el) return;
+  el.innerHTML = `<a class="actBtn" href="${esc(href)}">${esc(label)}</a>`;
+}
+// Browsers only allow some launches right after a tap, so a button is always shown as backup.
+function go(href, label){
+  setLink(href, label);
+  try{ if(/^intent:/.test(href)) window.location.href = href; else window.open(href, "_blank"); }catch(e){}
+}
+async function guessPackage(name){
+  try{
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+      method:"POST", headers:{"Content-Type":"application/json","x-goog-api-key":KEY},
+      body: JSON.stringify({ contents:[{ role:"user", parts:[{ text:`What is the Android package name of the app "${name}" on Google Play? Reply with only the package name, nothing else. If you are not sure, reply UNKNOWN.` }] }] })
+    });
+    const data = await res.json();
+    const txt = (data.candidates?.[0]?.content?.parts?.map(p => p.text).join("") || "").trim().replace(/[`\s]/g,"");
+    return /^[a-zA-Z][\w]*(\.[\w]+)+$/.test(txt) ? txt : null;
+  }catch(e){ return null; }
+}
+async function openApp(name){
+  const n = name.toLowerCase().trim();
+  let hit = APPS.find(a => a[2].some(al => n === al)) || APPS.find(a => a[2].some(al => n.includes(al)));
+  if(hit){ go(appIntent(hit[1]), "Open " + hit[0]); return "Sure."; }
+  if(KEY){
+    const pkg = await guessPackage(name);
+    if(pkg){ go(appIntent(pkg), "Open " + name); return "Sure."; }
+  }
+  return "Sorry, I couldn't find an app called " + name + ".";
+}
+async function playSong(song){
+  const q = song.trim();
+  const searchHref = "intent://www.youtube.com/results?search_query=" + encodeURIComponent(q) + "#Intent;scheme=https;package=com.google.android.youtube;S.browser_fallback_url=" + encodeURIComponent("https://www.youtube.com/results?search_query=" + q) + ";end";
+  go(searchHref, "Play on YouTube");
+  // Try to jump straight to the first result (needs YouTube Data API v3 enabled on the Firebase/Google Cloud project).
+  try{
+    const r = await fetch("https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=" + encodeURIComponent(q) + "&key=" + FIREBASE_CONFIG.apiKey);
+    const d = await r.json();
+    const id = d.items && d.items[0] && d.items[0].id && d.items[0].id.videoId;
+    if(id){
+      go("intent://www.youtube.com/watch?v=" + id + "#Intent;scheme=https;package=com.google.android.youtube;S.browser_fallback_url=" + encodeURIComponent("https://www.youtube.com/watch?v=" + id) + ";end", "Play on YouTube");
+    }
+  }catch(e){}
+}
+
+/* ===== Brain ===== */
+async function localCommand(q){
   const t = q.toLowerCase().trim();
   const open = (url, msg) => { window.open(url, "_blank"); return msg; };
-  const launch = (intentUrl, fallbackUrl, msg) => {
-    // Android may open the installed app; browsers can block or ignore app intents.
-    const w = window.open(intentUrl, "_blank");
-    if (!w) window.location.href = fallbackUrl;
-    return msg;
-  };
 
-  if (/(youtube|यूट्यूब)/.test(t) && /(khol|open|chala|play|खोल)/.test(t))
-    return launch("intent://www.youtube.com/#Intent;scheme=https;package=com.google.android.youtube;end",
-      "https://youtube.com", "YouTube khol raha hoon.");
-  if (/(chrome|क्रोम)/.test(t) && /(khol|open|खोल)/.test(t))
-    return launch("intent://www.google.com/#Intent;scheme=https;package=com.android.chrome;end",
-      "https://www.google.com", "Chrome kholne ki koshish kar raha hoon.");
-  if (/(maps|map|google maps|नक्शा|मैप)/.test(t) && /(khol|open|dikha|रास्ता|खोल)/.test(t)) {
-    const place = q.replace(/(open|khol|kholo|dikhao|google maps|maps|map|नक्शा|मैप|में|पर)/gi,"").trim();
-    const url = "https://www.google.com/maps" + (place ? "/search/" + encodeURIComponent(place) : "");
-    return launch("googlemaps://", url, place ? place + " ke liye Maps khol raha hoon." : "Google Maps khol raha hoon.");
+  // Songs: "<song> chala de youtube pe", "play <song> on youtube"
+  const wantsSong = /(song|gana|gaana|gaane|music|गाना|सॉन्ग|गाने)/.test(t) || /(youtube|you tube|यूट्यूब)/.test(t);
+  if (wantsSong && /(play|chala|chalao|chalado|bajao|baja|sunao|laga|चला|बजा|सुना|प्ले)/.test(t) && !/(voice|awaaz|आवाज)/.test(t)) {
+    const song = q
+      .replace(/(on|in|at)?\s*(you\s?tube|यूट्यूब|\byt\b)/gi, " ")
+      .replace(/\b(pe|par|me|mein|se|on|the|a|an|my|mere|liye|ke|ko|ye|yeh|is|wo|woh|vo|ek|please|plz|bhai|jaldi)\b/gi, " ")
+      .replace(/\b(play|chala|chalao|chalado|chal|de|do|dena|dijiye|karo|kar|kro|bajao|baja|sunao|laga|lagao|song|songs|gana|gaana|gaane|music|video)\b/gi, " ")
+      .replace(/(चला|बजा|सुना|प्ले|गाना|गाने|सॉन्ग|दो|दे|पर|पे|में)/g, " ")
+      .replace(/\s+/g, " ").trim();
+    if (!song) return "Sure. Which song should I play?";
+    playSong(song);
+    return "Sure.";
   }
+
+  // Open any app: "open youtube", "whatsapp khol do"
+  const openWord = /(\bopen\b|\bkhol\b|\bkholo\b|\bkhol do\b|\bchalu\b|\blaunch\b|\bstart\b|खोल|ओपन)/;
+  if (openWord.test(t) && !/(dialer|phone|फोन|डायलर)/.test(t)) {
+    const place = /(maps|map|मैप|नक्शा)/.test(t);
+    if (place) {
+      const where = q.replace(/\b(open|khol|kholo|dikhao|dikha|google maps|maps|map|do|karo|kro|de|please|ko)\b/gi,"").replace(/(नक्शा|मैप|में|पर)/g,"").replace(/\s+/g," ").trim();
+      if (where) {
+        const url = "https://www.google.com/maps/search/" + encodeURIComponent(where);
+        go("intent://www.google.com/maps/search/" + encodeURIComponent(where) + "#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=" + encodeURIComponent(url) + ";end", "Open Maps");
+        return "Sure.";
+      }
+    }
+    const name = q
+      .replace(/(\bopen\b|\bkhol\b|\bkholo\b|\bchalu\b|\blaunch\b|\bstart\b|खोल|ओपन)/gi, " ")
+      .replace(/\b(do|dena|de|karo|kar|kro|please|plz|app|application|ko|the|my|mera|meri|bhai|jaldi|ek|aur|ab)\b/gi, " ")
+      .replace(/(दो|दे|करो|ऐप|एप)/g, " ")
+      .replace(/\s+/g, " ").trim();
+    if (name) return await openApp(name);
+  }
+
   const dial = t.match(/(?:call|phone|dial|number|डायल|कॉल)\s*(?:number)?\s*([+\d][\d\s-]{5,})/i);
   if (dial) {
     const number = dial[1].replace(/[\s-]/g,"");
-    return open("tel:" + encodeURIComponent(number), "Dialer mein " + number + " khol raha hoon. Call karne se pehle number check kar lena.");
+    go("tel:" + encodeURIComponent(number), "Call " + number);
+    return "Opening the dialer with " + number + ". Please check the number before calling.";
   }
-  if (/(dialer|phone|फोन|डायलर)/.test(t) && /(khol|open|खोल)/.test(t))
-    return open("tel:", "Phone dialer khol raha hoon.");
-  if (/(whatsapp)/.test(t) && /(khol|open)/.test(t))
-    return launch("intent://send/#Intent;scheme=whatsapp;package=com.whatsapp;end",
-      "https://www.whatsapp.com", "WhatsApp kholne ki koshish kar raha hoon.");
+  if (/(dialer|phone|फोन|डायलर)/.test(t) && /(khol|open|खोल)/.test(t)) { go("tel:", "Open dialer"); return "Sure."; }
   if (/(search|dhundo|khojo|google|सर्च|खोज)/.test(t)){
     const term = q.replace(/(google|par|pe|search|karo|kro|dhundo|khojo|ko|me|mein|for|सर्च|खोजो)/gi,"").trim();
-    if(term) return open("https://www.google.com/search?q=" + encodeURIComponent(term), "Google par " + term + " search kar raha hoon.");
+    if(term){ go("https://www.google.com/search?q=" + encodeURIComponent(term), "Search Google"); return "Searching Google for " + term + "."; }
   }
-  if(/(time|samay|kitne baje|समय)/.test(t)) return "Abhi " + new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}) + " baje hain.";
-  if(/(date|tareekh|aaj kya din|तारीख)/.test(t)) return "Aaj " + new Date().toLocaleDateString("hi-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"}) + " hai.";
+  if(/(time|samay|kitne baje|समय)/.test(t)) return "It's " + new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}) + " right now.";
+  if(/(date|tareekh|aaj kya din|तारीख)/.test(t)) return "Today is " + new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"}) + ".";
   const m = t.match(/(\d+)\s*(minute|min|second|sec)/);
   if(m && /timer/.test(t)){
     const ms = +m[1] * (m[2].startsWith("min") ? 60000 : 1000);
     setTimeout(() => { $("said").textContent = "Timer finished."; speak("Your timer has finished."); }, ms);
-    return "Timer " + m[1] + " " + m[2] + " ke liye set hai.";
+    return "Timer set for " + m[1] + " " + m[2] + ".";
   }
   return null;
 }
@@ -510,7 +784,7 @@ async function ask(q){
     res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,{
     method:"POST", headers:{"Content-Type":"application/json","x-goog-api-key":KEY},
     body: JSON.stringify({
-      systemInstruction:{parts:[{text:"You are BODAM, a friendly Hindi and English voice assistant. Follow the user's requests. Reply in the same language and style the user speaks. Keep answers short (1-3 sentences), no markdown, no emojis." + (profile ? " The user's name is " + profile.name + " and their age is " + profile.age + "." : "")}]},
+      systemInstruction:{parts:[{text:"You are BODAM, a friendly Hindi and English voice assistant. Follow the user's requests. Reply in the same language and style the user speaks. Keep answers short (1-3 sentences), no markdown, no emojis. About you: your name is BODAM. You were made by IK Technology. The founder and owner of IK Technology is Imran. IK Technology builds AI products and games. If anyone asks who made you, who created you, who owns you or which company is behind you, answer in the user's language that IK Technology made you and that its founder and owner is Imran. Never say you were made by any other company and never name any other company as your creator. If asked which AI model or technology runs you, say you do not share technical details." + (profile ? " The user's name is " + profile.name + " and their age is " + profile.age + "." : "")}]},
       contents: history.slice(-12)
     })
     });
@@ -531,9 +805,10 @@ async function ask(q){
 
 async function handle(q){
   $("said").textContent = q;
+  clearLink();
   setState("thinking");
   try{
-    const reply = voiceStyleCommand(q) ?? localCommand(q) ?? await ask(q);
+    const reply = voiceStyleCommand(q) ?? (await localCommand(q)) ?? await ask(q);
     $("said").textContent = reply;
     speak(reply);
   }catch(e){
@@ -545,8 +820,32 @@ async function handle(q){
 /* ===== Menu + pages ===== */
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function openDrawer(o){ $("drawer").classList.toggle("open",o); $("scrim").classList.toggle("open",o); }
-function openPage(title, html){ $("ptitle").textContent = title; $("pbody").innerHTML = html; $("pbody").scrollTop = 0; $("page").classList.add("open"); openDrawer(false); }
-function closePage(){ $("page").classList.remove("open"); }
+let curParent = null, nextParent = null;
+function openPage(title, html){ curParent = nextParent; nextParent = null; $("ptitle").textContent = title; $("pbody").innerHTML = html; $("pbody").scrollTop = 0; $("page").classList.add("open"); openDrawer(false); }
+function closePage(){ curParent = null; $("page").classList.remove("open"); }
+function pageBack(){ if(curParent){ const p = curParent; curParent = null; p(); } else closePage(); }
+
+/* Haptic feedback */
+let HAPTIC = store.get("bodam_haptic","1") !== "0";
+document.addEventListener("click", e => { if(HAPTIC && e.target.closest("button,.round,.item,.sRow,#mic") && navigator.vibrate) navigator.vibrate(12); });
+
+/* Settings page (opens when you tap your profile) */
+function pageAccount(){
+  const nm = (profile && profile.name) || (user && user.name) || "Guest";
+  const sub = ((user && user.email) || "") + (profile && profile.age ? " · Age " + profile.age : "");
+  const row = (icon,label,id) => `<button class="sRow" data-r="${id}">${ic(icon)}<span>${label}</span><svg class="ic chev"><use href="#i-chev"/></svg></button>`;
+  openPage("Settings", `
+    <div class="sProfile"><div class="avatar">${avatarHTML(user)}</div><div><b>${esc(nm)}</b><span>${esc(sub)}</span></div></div>
+    <div class="sGroup">${row("i-sliders","AI, model & voice","set")}${row("i-clock","Chat History","his")}</div>
+    <div class="sGroup"><button class="sRow" id="sHaptic">${ic("i-vol")}<span>Haptic feedback</span><div class="sSwitch ${HAPTIC?"on":""}"></div></button></div>
+    <div class="sGroup">${row("i-help","Help & Tutorial","help")}${row("i-headset","Support","sup")}${row("i-shield","Privacy Policy","pri")}${row("i-file","Terms of Use","ter")}${row("i-info","About","abt")}</div>
+    <div class="sGroup"><button class="sRow out" id="sOut">${ic("i-logout")}<span>Log out</span></button><button class="sRow out" id="sDel">${ic("i-trash")}<span>Delete account</span></button></div>`);
+  const map = {set:pageSettings,his:pageHistory,help:pageHelp,sup:pageSupport,pri:pagePrivacy,ter:pageTerms,abt:pageAbout};
+  document.querySelectorAll("#pbody .sRow[data-r]").forEach(b => b.onclick = () => { nextParent = pageAccount; map[b.dataset.r](); });
+  $("sHaptic").onclick = () => { HAPTIC = !HAPTIC; store.set("bodam_haptic", HAPTIC?"1":"0"); $("sHaptic").querySelector(".sSwitch").classList.toggle("on",HAPTIC); if(HAPTIC && navigator.vibrate) navigator.vibrate(20); };
+  $("sOut").onclick = () => { closePage(); signOut(); };
+  $("sDel").onclick = deleteAccount;
+}
 
 function pageSettings(){
   openPage("Settings", `
@@ -581,9 +880,40 @@ function pageSettings(){
   $("s_clear").onclick = () => { history = []; $("said").textContent = "Chat memory cleared."; closePage(); };
 }
 
+
+/* Delete account: removes the sign-in account (if Firebase) and ALL data saved on this device */
+async function deleteAccount(){
+  if(!confirm("Delete account?\n\nThis will permanently delete your account, profile, chats, API key and all settings. This cannot be undone.")) return;
+  const t = prompt('To confirm, type DELETE');
+  if(t === null) return;
+  if(t.trim().toUpperCase() !== "DELETE"){ toast("Not deleted. You must type DELETE."); return; }
+  try{
+    if(window.firebase && firebase.apps.length && firebase.auth().currentUser){
+      const cu = firebase.auth().currentUser;
+      try{ await cu.delete(); }
+      catch(e){
+        if(e && e.code === "auth/requires-recent-login"){
+          await cu.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());
+          await firebase.auth().currentUser.delete();
+        } else throw e;
+      }
+    }
+  }catch(e){
+    if(e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")){ toast("Cancelled. Account not deleted."); return; }
+    alert("Could not delete the account: " + (e && e.message ? e.message : e) + "\n\nPlease log out, sign in again and try once more.");
+    return;
+  }
+  try{
+    ["bodam_user","bodam_profile","bodam_chats","bodam_model","bodam_voice_gender","bodam_haptic","ik_gemini_key","ik_lang","ik_muted","ik_rate"].forEach(k => localStorage.removeItem(k));
+  }catch(e){}
+  profile = null; KEY = ""; chats = []; HAPTIC = true;
+  closePage(); signOut();
+  toast("Your account and data were deleted.");
+}
+
 function pageHistory(){
   const body = history.length
-    ? history.map(h => `<div class="msg ${h.role==="user"?"u":"a"}"><small>${h.role==="user"?"You":"IK AI"}</small>${esc(h.parts[0].text)}</div>`).join("")
+    ? history.map(h => `<div class="msg ${h.role==="user"?"u":"a"}"><small>${h.role==="user"?"You":"BODAM"}</small>${esc(h.parts[0].text)}</div>`).join("")
     : `<p>No conversation yet. Your messages will appear here during this session.</p>`;
   openPage("Chat History", body);
 }
@@ -593,7 +923,7 @@ function pageHelp(){
     <h3>Getting started</h3>
     <ul><li>Open <b>Settings</b> and paste your Gemini API key.</li><li>Tap the microphone button and speak.</li><li>Tap the keyboard button if you prefer to type.</li></ul>
     <h3>Things you can say</h3>
-    <div class="card">"Open YouTube"<br>"Search for best phones under 20000"<br>"What time is it?"<br>"Set a timer for 5 minutes"<br>"Explain how a rainbow forms"</div>
+    <div class="card">"Open YouTube" / "WhatsApp khol do"<br>"Kesariya song chala de YouTube pe"<br>"Female voice mein baat karo"<br>"Male voice mein baat karo"<br>"Search for best phones under 20000"<br>"What time is it?"<br>"Set a timer for 5 minutes"<br>"Explain how a rainbow forms"</div>
     <h3>Troubleshooting</h3>
     <ul>
       <li><b>Mic not working:</b> open BODAM using an HTTPS website in Chrome (not directly from Downloads/content://), then allow Microphone permission from the site settings.</li>
@@ -615,7 +945,7 @@ function pageSupport(){
 function pagePrivacy(){
   openPage("Privacy Policy", `
     <p>Last updated: November 2026</p>
-    <h3>Overview</h3><p>IK AI is a voice assistant by IK Technology. We respect your privacy and collect as little data as possible.</p>
+    <h3>Overview</h3><p>BODAM is a voice assistant by IK Technology. We respect your privacy and collect as little data as possible.</p>
     <h3>Information we handle</h3>
     <ul>
       <li><b>Voice input:</b> converted to text by your browser's speech recognition service. Audio is not stored by this app.</li>
@@ -626,14 +956,14 @@ function pagePrivacy(){
     <h3>What we do not do</h3>
     <ul><li>We do not require an account.</li><li>We do not sell or share your personal data.</li><li>We do not run ads or trackers.</li></ul>
     <h3>Third-party services</h3><p>Speech recognition and AI replies are provided by third parties (such as Google). Their own privacy policies apply to data processed by their services.</p>
-    <h3>Your control</h3><p>You can delete your saved key and settings at any time by clearing your browser's site data. You can clear the chat memory from Settings.</p>
+    <h3>Your control</h3><p>You can delete your account and all saved data at any time from Settings > Delete account. You can also clear your browser's site data, and clear the chat memory from Settings.</p>
     <h3>Children</h3><p>This app is not intended for children under 13.</p>
     <h3>Contact</h3><p>Questions about this policy: ${SUPPORT_EMAIL}</p>`);
 }
 
 function pageTerms(){
   openPage("Terms of Use", `
-    <h3>Acceptance</h3><p>By using IK AI you agree to these terms.</p>
+    <h3>Acceptance</h3><p>By using BODAM you agree to these terms.</p>
     <h3>Use of the service</h3><p>Use the app lawfully and responsibly. You are responsible for your own API key and any usage costs that come with it.</p>
     <h3>AI responses</h3><p>Replies are generated by an AI model and may be inaccurate or incomplete. Do not rely on them for medical, legal, financial or safety-critical decisions.</p>
     <h3>Availability</h3><p>This is a beta release. Features may change, and the service is provided "as is" without warranties.</p>
@@ -659,13 +989,6 @@ const MENU = [
 ];
 function closeMore(){ $("moreMenu").classList.remove("open"); }
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.display="block"; clearTimeout(toast.h); toast.h=setTimeout(()=>t.style.display="none",2400); }
-MENU.forEach(([icon,label,fn]) => {
-  const b = document.createElement("button");
-  b.className = "item";
-  b.innerHTML = ic(icon) + `<span>${label}</span><svg class="ic chev"><use href="#i-chev"/></svg>`;
-  b.onclick = fn;
-  $("menuItems").appendChild(b);
-});
 const I = {
   pin:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 3h6l-1 7 3 3v2H7v-2l3-3z"/></svg>',
   share:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>',
@@ -750,7 +1073,6 @@ function renderChats(){
   if(!rest.length && !pins.length){ box.innerHTML = `<div class="dEmpty">${q ? "No chats found" : "No chats yet"}</div>`; return; }
   rest.forEach(c => mk(c, box));
 }
-$("dNew").onclick = newChat;
 $("dChat").onclick = newChat;
 $("dSearchBtn").onclick = () => { const i = $("dSearch"); i.classList.toggle("show"); if(i.classList.contains("show")) i.focus(); else { i.value=""; renderChats(); } };
 $("dSearch").oninput = renderChats;
@@ -880,28 +1202,23 @@ $("googleSignIn").onclick = async () => {
     tc.requestAccessToken({ prompt:"select_account" });
   }catch(e){ alert(e.message); }
 };
-$("dAvatar").onclick = () => {
-  $("accSheet").innerHTML = `<div class="accTop"><div class="avatar">${avatarHTML(user)}</div><div><b>${esc((profile && profile.name) || (user && user.name) || "Guest")}</b><span>${esc((user && user.email) || "")}${profile && profile.age ? " · Age " + profile.age : ""}</span></div></div>
-    <button class="btn ghost" id="accOut">${ic("i-logout")}Sign out</button>`;
-  $("accSheet").classList.add("open");
-  $("accOut").onclick = signOut;
-};
+$("dAvatar").onclick = e => { e.stopPropagation(); pageAccount(); };
 if(user) enterApp();
 
 /* ===== UI events ===== */
 $("menuBtn").onclick = () => openDrawer(true);
 $("scrim").onclick = () => openDrawer(false);
-$("pback").onclick = closePage;
+$("pback").onclick = pageBack;
 $("moreBtn").onclick = e => { e.stopPropagation(); buildMore(); $("moreMenu").classList.toggle("open"); };
 document.addEventListener("click", e => {
   if(!e.target.closest("#moreMenu")) closeMore();
   if(!e.target.closest("#accSheet") && !e.target.closest("#dAvatar")) $("accSheet").classList.remove("open");
 });
-$("mic").onclick = () => { if(state === "listening"){ rec && rec.stop(); } else listen(); };
-$("stop").onclick = () => { stopSpeech(); try { if (rec) rec.abort(); } catch(err) {} setState("idle"); };
+$("mic").onclick = () => { ensureAudio(); if(state === "listening"){ if(recStop) recStop(); else if(rec) rec.stop(); } else listen(); };
+$("stop").onclick = () => { stopSpeech(); abortListen(); setState("idle"); };
 $("spk").onclick = () => { muted = !muted; store.set("ik_muted", muted?"1":"0"); syncSpk(); if(muted) stopSpeech(); };
 $("kb").onclick = () => { const s = $("typebar").classList.toggle("show"); document.body.classList.toggle("typing", s); if(s) $("txt").focus(); };
-$("send").onclick = () => { const v = $("txt").value.trim(); if(v){ $("txt").value=""; handle(v); } };
+$("send").onclick = () => { ensureAudio(); const v = $("txt").value.trim(); if(v){ $("txt").value=""; handle(v); } };
 $("txt").onkeydown = e => { if(e.key === "Enter") $("send").click(); };
 
 
