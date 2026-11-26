@@ -1,0 +1,69 @@
+
+name: BODAM Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Create Capacitor Project
+        run: |
+          mkdir -p www
+          cp index.html www/index.html
+
+          cat > package.json <<'EOF'
+          {
+            "name": "bodam",
+            "version": "1.0.0",
+            "private": true
+          }
+          EOF
+
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.iktecnology1.bodam",
+            "appName": "BODAM",
+            "webDir": "www"
+          }
+          EOF
+
+          npm install @capacitor/core @capacitor/android @capacitor/cli
+
+          npx cap add android
+          npx cap sync android
+
+      - name: Build Android APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload BODAM APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BODAM-Android-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          
