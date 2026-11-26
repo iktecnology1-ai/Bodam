@@ -1368,58 +1368,5 @@ async function pageNews(){
   }catch(e){ box.textContent = "Could not load news: " + e.message; }
 }
 </script>
-
-<script>
-/* BODAM Fast Voice Patch
-   Prefer the phone/browser's built-in speech recognition and speech synthesis.
-   This removes the extra Gemini audio-transcription and Gemini-TTS network round trips.
-   Gemini remains responsible for the text answer.
-*/
-(function () {
-  const originalListen = window.listen;
-  window.listen = function () {
-    if (!window.isSecureContext) {
-      setState("idle", "Mic needs HTTPS. Open BODAM from a secure https:// link.");
-      return;
-    }
-    // Native browser speech recognition is usually much quicker than
-    // recording a WAV file and uploading it to Gemini for transcription.
-    if (window.SpeechRecognition || window.webkitSpeechRecognition) {
-      try { listenSR(); }
-      catch (e) {
-        setState("idle", "Could not start the microphone. Check Chrome microphone permission.");
-      }
-    } else if (typeof listenGemini === "function") {
-      // Compatibility fallback for browsers without SpeechRecognition.
-      listenGemini();
-    } else if (typeof originalListen === "function") {
-      originalListen();
-    } else {
-      setState("idle", "Voice input is not supported in this browser. Please type your message.");
-    }
-  };
-
-  // Use the Android/browser's installed voice instead of waiting for a
-  // separate Gemini text-to-speech API request after every answer.
-  window.speak = function (text) {
-    if (muted) {
-      setState("idle");
-      resumeConversation();
-      return;
-    }
-    speakBrowser(text);
-  };
-
-  // Shorten the pause before the next listening turn.
-  window.resumeConversation = function () {
-    if (conversationMode && state === "idle") {
-      setTimeout(function () {
-        if (conversationMode && state === "idle") listen();
-      }, 180);
-    }
-  };
-})();
-</script>
-
 </body>
 </html>
