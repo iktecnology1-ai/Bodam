@@ -188,6 +188,25 @@
 
   .newsI{padding:12px 0;border-bottom:1px solid #ffffff14;line-height:1.5;font-size:15px}
 </style>
+
+<style>
+/* ===== v2: camera + emotional voice ===== */
+#camBtn.act{background:#2f6bff33;border-color:#4a86ff}
+#camWrap,#camWrap.show{position:fixed;left:-300px;top:0;width:4px;height:4px;opacity:0;pointer-events:none;overflow:hidden;display:block}
+.topR{display:flex;align-items:center;gap:10px}
+#camBtn{position:relative}
+#camBtn .camDot{position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:50%;background:#ff3b5c;border:1.5px solid #0a111f;display:none}
+#camBtn.act .camDot{display:block}
+#camBtn.act .camSlash{display:none}
+#camBtn:not(.act){color:#8a98bd}
+#camBtn.act{color:#fff}
+#camFlip{display:none}
+#camFlip.show{display:grid}
+#camWrap.show{display:block}
+#camVid{width:100%;height:100%;object-fit:cover;display:block}
+#camWrap .live{position:absolute;left:6px;top:6px;font-size:10px;font-weight:700;letter-spacing:.06em;background:#e5334d;color:#fff;border-radius:6px;padding:2px 6px}
+#camWrap .flip{position:absolute;right:6px;bottom:6px;font-size:10px;background:#000a;color:#fff;border-radius:6px;padding:3px 6px}
+</style>
 </head>
 <body>
 
@@ -267,7 +286,11 @@
 <div class="app" id="assistantApp">
   <div class="top">
     <div class="round" id="menuBtn" aria-label="Menu"><svg class="ic"><use href="#i-menu"/></svg></div>
+    <div class="topR">
+    <div class="round" id="camFlip" aria-label="Switch camera"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3.2l-1.6-2H8.8L7.2 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><path d="M9.2 13.2a3 3 0 0 1 5-1.6l.8.9"/><path d="M15 9.6v2.2h-2.2"/><path d="M14.8 14.2a3 3 0 0 1-5 1.6l-.8-.9"/><path d="M9 18.4v-2.2h2.2"/></svg></div>
+    <div class="round" id="camBtn" aria-label="Camera on or off"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3.2l-1.6-2H8.8L7.2 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z"/><circle cx="12" cy="13" r="3.6"/><line class="camSlash" x1="3.5" y1="3.5" x2="20.5" y2="20.5" stroke-width="2"/></svg><span class="camDot"></span></div>
     <div class="round" id="moreBtn" aria-label="More options"><svg class="ic"><use href="#i-dots"/></svg></div>
+    </div>
   </div>
 
   <canvas id="orb" width="640" height="640"></canvas>
@@ -289,6 +312,8 @@
     </div>
   </div>
 </div>
+
+<div id="camWrap"><video id="camVid" playsinline muted autoplay></video><span class="live">LIVE</span><span class="flip">flip</span></div>
 
 <!-- Side menu -->
 <div id="scrim"></div>
@@ -355,8 +380,14 @@ let muted = store.get("ik_muted","0") === "1";
 let VOICE_GENDER = store.get("bodam_voice_gender", "male"); // male | female | auto
 let state = "idle", history = [];
 
+let autoListenT = null;
 function setState(s, label){
   state = s;
+  clearTimeout(autoListenT);
+  if(s === "idle" && conversationMode){
+    if(label && /(quiet|Could not hear|No speech|try again)/i.test(label)) label = "Listening…";
+    autoListenT = setTimeout(() => { if(conversationMode && state === "idle") listen(); }, 700);
+  }
   $("mic").classList.toggle("on", s === "listening");
   $("stxt").textContent = label || ({idle:"Tap mic to talk",listening:"I'm Listening",thinking:"Thinking...",speaking:"Speaking..."}[s]);
 }
@@ -444,9 +475,9 @@ async function listenGemini(){
   stopSpeech(); ensureAudio();
   let stream;
   try{ stream = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:false, autoGainControl:true, channelCount:1 } }); }
-  catch(e){ setState("idle","Mic permission blocked. Allow microphone for this site in Chrome settings."); return; }
+  catch(e){ conversationMode = false; setState("idle","Mic permission blocked. Allow microphone for this site in Chrome settings."); return; }
   const ctx = audioCtx;
-  if(!ctx){ stream.getTracks().forEach(t => t.stop()); setState("idle","Audio is not supported in this browser."); return; }
+  if(!ctx){ stream.getTracks().forEach(t => t.stop()); conversationMode = false; setState("idle","Audio is not supported in this browser."); return; }
   try{ if(ctx.state !== "running") await ctx.resume(); }catch(e){}
   const src = ctx.createMediaStreamSource(stream);
   const proc = ctx.createScriptProcessor(4096, 1, 1);
@@ -456,7 +487,7 @@ async function listenGemini(){
   recAborted = false;
   setState("listening","Listening… speak now");
   tit();
-  const dog = setTimeout(() => { if(!done && !n){ recAborted = true; finish(); setState("idle","Mic is not giving any audio. Close other apps using the mic and try again."); } }, 2500);
+  const dog = setTimeout(() => { if(!done && !n){ recAborted = true; finish(); conversationMode = false; setState("idle","Mic is not giving any audio. Close other apps using the mic and try again."); } }, 2500);
   const finish = async () => {
     if(done) return; done = true; recStop = null; clearTimeout(dog); micLevel = 0;
     try{ proc.onaudioprocess = null; proc.disconnect(); src.disconnect(); mute.disconnect(); }catch(e){}
@@ -485,14 +516,14 @@ async function listenGemini(){
     if(n <= 3) return;
     if(rms > th){ hits++; if(hits >= 2) heard = true; silence = 0; }
     else { if(hits < 2) hits = 0; if(heard) silence += ms; }
-    if((heard && silence > 1400) || total > 25000 || (!heard && total > 10000)) finish();
+    if((heard && silence > 850) || total > 25000 || (!heard && total > 10000)) finish();
   };
   src.connect(proc); proc.connect(mute); mute.connect(ctx.destination);
 }
 
 function listen(){
   if (!window.isSecureContext) {
-    setState("idle", "Mic needs HTTPS. Open BODAM from a secure https:// link.");
+    conversationMode = false; setState("idle", "Mic needs HTTPS. Open BODAM from a secure https:// link.");
     return;
   }
   if (KEY && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (window.AudioContext || window.webkitAudioContext)) return listenGemini();
@@ -500,11 +531,11 @@ function listen(){
 }
 function listenSR(){
   if (!window.isSecureContext) {
-    setState("idle", "Mic needs HTTPS. Open BODAM from a secure https:// link.");
+    conversationMode = false; setState("idle", "Mic needs HTTPS. Open BODAM from a secure https:// link.");
     return;
   }
   if (!SR) {
-    setState("idle", "Voice input is not supported here. Use Chrome or type your message.");
+    conversationMode = false; setState("idle", "Voice input is not supported here. Use Chrome or type your message.");
     return;
   }
   stopSpeech();
@@ -529,6 +560,7 @@ function listenSR(){
         ? "Mic permission blocked. Allow microphone for this site in Chrome settings."
         : reason === "no-speech" ? "No speech detected. Tap mic and try again."
         : "Microphone error: " + reason;
+      if(reason === "not-allowed" || reason === "service-not-allowed") conversationMode = false;
       setState("idle", msg);
     };
     rec.onend = () => {
@@ -599,11 +631,12 @@ async function speakGemini(text){
   node.onended = () => { if(my === ttsToken){ ttsNode = null; setState("idle"); resumeConversation(); } };
   ttsNode = node; setState("speaking"); node.start();
 }
-function resumeConversation(){ if(conversationMode && state === "idle") setTimeout(()=>{ if(conversationMode && state === "idle") listen(); }, 650); }
-function speak(text){
+function resumeConversation(){ /* handled by setState: mic keeps listening while the session is on */ }
+function speak(text, emo){
   if (muted) { setState("idle"); resumeConversation(); return; }
   if (KEY && VOICE_GENDER !== "auto") {
-    speakGemini(text).catch(() => speakBrowser(text));
+    /* Same Gemini voice every time: no silent switch to the phone voice any more. */
+    spkBegin(); spkAdd(text, emo || "warm"); spkEnd();
     return;
   }
   speakBrowser(text);
@@ -838,9 +871,10 @@ async function handle(q){
   clearLink();
   setState("thinking");
   try{
-    const reply = featureCommand(q) ?? voiceStyleCommand(q) ?? (await localCommand(q)) ?? await ask(q);
-    $("said").textContent = reply;
-    speak(reply);
+    const local = featureCommand(q) ?? voiceStyleCommand(q) ?? (await localCommand(q));
+    if(local != null){ $("said").textContent = local; speak(local); return; }
+    if(!camOn && /(\bdekh(o|na|ta|ke)?\b|ye kya hai|yeh kya hai|kya hai ye|kya likha|what is this|what do you see|look at|see this)/i.test(q)){ await camStart(); }
+    await replyStream(q);
   }catch(e){
     $("said").textContent = "Error: " + e.message;
     setState("idle");
@@ -1250,8 +1284,12 @@ document.addEventListener("click", e => {
   if(!e.target.closest("#moreMenu")) closeMore();
   if(!e.target.closest("#accSheet") && !e.target.closest("#dAvatar")) $("accSheet").classList.remove("open");
 });
-$("mic").onclick = () => { ensureAudio(); conversationMode = !conversationMode; if(!conversationMode){ abortListen(); stopSpeech(); setState("idle","Voice session stopped"); } else { listen(); } };
-$("stop").onclick = () => { conversationMode=false; stopSpeech(); abortListen(); setState("idle"); };
+$("mic").onclick = () => {
+  ensureAudio(); conversationMode = !conversationMode;
+  if(!conversationMode){ wakeOff(); abortListen(); stopSpeech(); setState("idle","Mic off. Dubara dabao to chalu."); }
+  else { wakeOn(); toast("Mic chalu: BODAM sunta rahega. Band karne ke liye mic dobara dabao."); listen(); }
+};
+$("stop").onclick = () => { conversationMode=false; wakeOff(); stopSpeech(); abortListen(); setState("idle"); };
 $("spk").onclick = () => { muted = !muted; store.set("ik_muted", muted?"1":"0"); syncSpk(); if(muted) stopSpeech(); };
 $("kb").onclick = () => { const s = $("typebar").classList.toggle("show"); document.body.classList.toggle("typing", s); if(s) $("txt").focus(); };
 $("send").onclick = () => { ensureAudio(); const v = $("txt").value.trim(); if(v){ $("txt").value=""; handle(v); } };
@@ -1367,6 +1405,180 @@ async function pageNews(){
     box.innerHTML = lines.length ? lines.map(l => `<div class="newsI">${esc(l)}</div>`).join("") + `<p style="opacity:.5;font-size:12px;margin-top:10px">Via Gemini with Google Search</p>` : "No headlines found.";
   }catch(e){ box.textContent = "Could not load news: " + e.message; }
 }
+
+/* ================= v2: fast streaming reply + emotional voice + camera ================= */
+const TTS_FALLBACK = "gemini-2.5-flash-preview-tts";   // same voice names, used only if the main TTS model fails
+const EMO = {
+  warm:"warm, loving and affectionate", happy:"happy, cheerful, you can hear a smile", excited:"excited, energetic and thrilled",
+  caring:"deeply caring, tender and comforting, a little soft", sad:"soft and sad, with a gentle emotional tremble",
+  calm:"calm, soothing and relaxed", serious:"serious, firm and confident"
+};
+const EMO_PROMPT = "Always begin your reply with exactly one emotion tag in square brackets, chosen from [warm] [happy] [excited] [caring] [sad] [calm] [serious], matching the feeling the user needs right now. Then the reply itself. Talk like a real emotional close friend: show feelings, use natural Hinglish, short sentences. If an image is attached it is a live snapshot from the user's phone camera: describe and help based on what you actually see, and say honestly when you cannot tell. ";
+function baseSys(){
+  return extraPrompt() + "You are BODAM, a friendly Hindi and English voice assistant. Follow the user's requests. Reply in the same language and style the user speaks. Keep answers short (1-3 sentences), no markdown, no emojis. About you: your name is BODAM. You were made by IK Technology. The founder and owner of IK Technology is Imran. IK Technology builds AI products and games. If anyone asks who made you, who created you, who owns you or which company is behind you, answer in the user's language that IK Technology made you and that its founder and owner is Imran. Never say you were made by any other company and never name any other company as your creator. If asked which AI model or technology runs you, say you do not share technical details." + (profile ? " The user's name is " + profile.name + " and their age is " + profile.age + "." : "");
+}
+
+/* ---- speech queue: first sentence starts playing while the rest is still being written ---- */
+let spkQ = [], spkRun = false, spkDone = true, spkFail = false, spkPlayed = false;
+function spkBegin(){ stopSpeech(); ensureAudio(); spkQ = []; spkRun = false; spkDone = false; spkFail = false; spkPlayed = false; }
+function spkAdd(text, emo){
+  const clean = String(text).replace(/[*_`#\[\]]/g, "").trim();
+  if(!clean) return;
+  const my = ttsToken;
+  spkQ.push(ttsBuffer(clean, emo));
+  if(!spkRun) spkLoop(my);
+}
+function spkEnd(){
+  spkDone = true;
+  if(!spkRun && !spkQ.length){ setState("idle"); resumeConversation(); }
+}
+async function spkLoop(my){
+  spkRun = true;
+  while(my === ttsToken){
+    if(!spkQ.length){ if(spkDone) break; await new Promise(r => setTimeout(r, 40)); continue; }
+    let buf = null;
+    try{ buf = await spkQ.shift(); }catch(e){ buf = null; spkFail = true; }
+    if(my !== ttsToken) return;
+    if(buf){ spkPlayed = true; await playBuf(buf, my); }
+  }
+  if(my === ttsToken){
+    spkRun = false;
+    if(spkFail && !spkPlayed) setState("idle", "Voice abhi busy hai, jawab screen par likha hai.");
+    else setState("idle");
+    resumeConversation();
+  }
+}
+function playBuf(buf, my){
+  return new Promise(res => {
+    if(my !== ttsToken || !audioCtx) return res();
+    const node = audioCtx.createBufferSource();
+    node.buffer = buf; node.connect(audioCtx.destination);
+    node.onended = () => { if(ttsNode === node) ttsNode = null; res(); };
+    ttsNode = node; setState("speaking"); node.start();
+  });
+}
+async function ttsBuffer(text, emo){
+  const male = VOICE_GENDER !== "female";
+  const feel = EMO[emo] || EMO.warm;
+  const style = "Speak in " + (male ? "a deep, warm, natural human male voice" : "a soft, warm, natural human female voice")
+    + ", with real human emotion: " + feel + ". Natural pauses and feeling, like a close friend talking, never robotic. Indian accent, pronounce Hindi words naturally.";
+  const models = [TTS_MODEL, TTS_MODEL, TTS_FALLBACK];
+  let lastErr = null;
+  for(let a = 0; a < models.length; a++){
+    try{
+      const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + models[a] + ":generateContent", {
+        method:"POST", headers:{"Content-Type":"application/json","x-goog-api-key":KEY},
+        body: JSON.stringify({
+          contents:[{ parts:[{ text: style + "\n\n" + text }] }],
+          generationConfig:{ responseModalities:["AUDIO"], speechConfig:{ voiceConfig:{ prebuiltVoiceConfig:{ voiceName: male ? VOICE_MALE : VOICE_FEMALE } } } }
+        })
+      });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error?.message || "TTS failed");
+      const part = (data.candidates?.[0]?.content?.parts || []).find(p => p.inlineData && p.inlineData.data);
+      if(!part) throw new Error("no audio returned");
+      const bin = atob(part.inlineData.data), n = bin.length >> 1;
+      const f32 = new Float32Array(n);
+      for(let i = 0; i < n; i++){
+        let v = bin.charCodeAt(2*i) | (bin.charCodeAt(2*i+1) << 8);
+        if(v >= 32768) v -= 65536;
+        f32[i] = v / 32768;
+      }
+      const buf = audioCtx.createBuffer(1, n, 24000);
+      buf.copyToChannel(f32, 0);
+      return buf;
+    }catch(e){ lastErr = e; await new Promise(r => setTimeout(r, 350 * (a + 1))); }
+  }
+  throw lastErr;
+}
+
+/* ---- streaming reply ---- */
+async function replyStream(q){
+  KEY = cleanApiKey(KEY);
+  if(!KEY) throw new Error("Please add your Gemini API key in Settings.");
+  if(!/^[\x21-\x7E]+$/.test(KEY)) throw new Error("API key mein invalid hidden/special character hai. Settings mein key dobara paste karein.");
+  const img = camFrame();
+  const parts = [{ text:q }];
+  if(img) parts.push({ inlineData:{ mimeType:"image/jpeg", data:img } });
+  const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + MODEL + ":streamGenerateContent?alt=sse", {
+    method:"POST", headers:{"Content-Type":"application/json","x-goog-api-key":KEY},
+    body: JSON.stringify({ systemInstruction:{ parts:[{ text: EMO_PROMPT + baseSys() }] }, contents:[...history.slice(-8), { role:"user", parts }] })
+  });
+  if(!res.ok){ let d = {}; try{ d = await res.json(); }catch(e){} throw new Error(d.error?.message || "API error"); }
+
+  const useG = !muted && KEY && VOICE_GENDER !== "auto";
+  if(useG) spkBegin();
+  const reader = res.body.getReader(), dec = new TextDecoder();
+  let buf = "", full = "", emo = null, spoken = "", sentUpTo = 0, firstDone = false;
+  const view = () => {
+    let t = full;
+    const m = t.match(/^\s*\[([a-zA-Z]+)\]\s*/);
+    if(m){ if(!emo) emo = m[1].toLowerCase(); t = t.slice(m[0].length); }
+    else if(/^\s*\[[a-zA-Z]*$/.test(t)){ return; }   /* tag still arriving */
+    spoken = t;
+    if(!emo) emo = "warm";
+    $("said").textContent = spoken;
+    if(useG && !firstDone){
+      const mm = spoken.match(/[.!?।]+(\s|$)|\n/);
+      if(mm && mm.index >= 6){ const end = mm.index + mm[0].length; spkAdd(spoken.slice(0, end), emo); sentUpTo = end; firstDone = true; setState("thinking", "Voice ban rahi hai…"); }
+    }
+  };
+  const eat = line => {
+    line = line.trim();
+    if(!line.startsWith("data:")) return;
+    try{ const j = JSON.parse(line.slice(5)); full += (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join(""); }catch(e){}
+  };
+  while(true){
+    const { done, value } = await reader.read();
+    if(done) break;
+    buf += dec.decode(value, { stream:true });
+    let i;
+    while((i = buf.indexOf("\n")) >= 0){ eat(buf.slice(0, i)); buf = buf.slice(i + 1); }
+    view();
+  }
+  eat(buf); view();
+  if(!full.trim()){ spoken = "Sorry, I didn't catch that."; $("said").textContent = spoken; }
+  history.push({ role:"user", parts:[{ text:q }] });
+  history.push({ role:"model", parts:[{ text:spoken }] });
+  saveChat();
+  if(useG){ const rest = spoken.slice(sentUpTo).trim(); if(rest) spkAdd(rest, emo || "warm"); spkEnd(); }
+  else speak(spoken);
+}
+
+/* ---- camera: BODAM sees what your phone camera sees ---- */
+let camOn = false, camStream = null, camFacing = "environment";
+async function camStart(){
+  if(camOn) return true;
+  if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ toast("Camera ke liye https link chahiye"); return false; }
+  try{
+    camStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:camFacing, width:{ideal:640}, height:{ideal:480} }, audio:false });
+  }catch(e){ toast("Camera permission block hai. Chrome site settings me allow karo."); return false; }
+  $("camVid").srcObject = camStream;
+  try{ await $("camVid").play(); }catch(e){}
+  camOn = true; $("camBtn").classList.add("act"); $("camFlip").classList.add("show"); toast("Camera on: BODAM ab dekh sakta hai");
+  return true;
+}
+function camStop(){
+  if(camStream) camStream.getTracks().forEach(t => t.stop());
+  camStream = null; camOn = false; $("camVid").srcObject = null;
+  $("camBtn").classList.remove("act"); $("camFlip").classList.remove("show");
+}
+function camFrame(){
+  const v = $("camVid");
+  if(!camOn || !v.videoWidth) return null;
+  const w = Math.min(640, v.videoWidth), h = Math.round(w * v.videoHeight / v.videoWidth);
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  c.getContext("2d").drawImage(v, 0, 0, w, h);
+  return c.toDataURL("image/jpeg", 0.6).split(",")[1];
+}
+$("camBtn").onclick = () => { if(camOn){ camStop(); toast("Camera off"); } else camStart(); };
+$("camFlip").onclick = async () => { camFacing = camFacing === "environment" ? "user" : "environment"; camStop(); await camStart(); };
+
+/* ---- always-on mic: keep the screen awake while the session is on ---- */
+let wakeLockObj = null;
+async function wakeOn(){ try{ if(navigator.wakeLock && !wakeLockObj){ wakeLockObj = await navigator.wakeLock.request("screen"); wakeLockObj.addEventListener("release", () => { wakeLockObj = null; }); } }catch(e){} }
+function wakeOff(){ try{ if(wakeLockObj) wakeLockObj.release(); }catch(e){} wakeLockObj = null; }
+document.addEventListener("visibilitychange", () => { if(document.visibilityState === "visible" && conversationMode) wakeOn(); });
 </script>
 </body>
 </html>
