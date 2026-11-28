@@ -840,7 +840,7 @@ async function ask(q){
   KEY = cleanApiKey(KEY);
   if(!KEY) throw new Error("Please add your Gemini API key in Settings.");
   // Fetch headers only accept Latin-1/ASCII-safe values. Reject a corrupted key clearly.
-  if(!/^[\x21-\x7E]+$/.test(KEY)) throw new Error("API key mein invalid hidden/special character hai. Settings mein key dobara paste karein.");
+  if(!/^[\x21-\x7E]+$/.test(KEY)) throw new Error("API key has an invalid hidden/special character. Please paste the key again in Settings.");
   history.push({role:"user", parts:[{text:q}]});
   let res;
   try {
@@ -854,7 +854,7 @@ async function ask(q){
   } catch(err) {
     history.pop();
     if(String(err?.message || err).includes("headers") || String(err?.message || err).includes("ISO-8859-1")) {
-      throw new Error("API key mein hidden ya invalid character hai. Settings mein key clear karke dobara paste karein.");
+      throw new Error("API key has a hidden or invalid character. Please clear the key in Settings and paste it again.");
     }
     throw err;
   }
@@ -925,7 +925,7 @@ function pageSettings(){
       <select id="s_lang"><option value="hi-IN">Auto / Hindi (India)</option><option value="en-IN">English (India)</option><option value="en-US">English (US)</option></select></div>
     <div class="field"><label>Voice style</label>
       <select id="s_gender"><option value="male">Deep male voice</option><option value="female">Deep female voice</option><option value="auto">Device default voice</option></select></div>
-    <div class="card" style="font-size:12px">You can also say “female voice mein baat karo” or “male voice mein baat karo” using the microphone. Available voices depend on your phone.</div>
+    <div class="card" style="font-size:12px">You can also say “talk in a female voice” or “talk in a male voice” using the microphone. Available voices depend on your phone.</div>
     <div class="field"><label>Speech rate <span id="s_rv"></span></label><input id="s_rate" type="range" min="0.7" max="1.4" step="0.05"></div>
     <div class="toggle"><span>Voice replies</span><input id="s_voice" type="checkbox"></div>
     <button class="btn" id="s_save">${ic("i-save")}Save settings</button>
@@ -937,7 +937,7 @@ function pageSettings(){
   $("s_rate").oninput = e => $("s_rv").textContent = (+e.target.value).toFixed(2) + "x";
   $("s_save").onclick = () => {
     KEY = cleanApiKey($("s_key").value); MODEL = $("s_model").value; LANG = $("s_lang").value; VOICE_GENDER = $("s_gender").value; RATE = parseFloat($("s_rate").value); muted = !$("s_voice").checked;
-    if(KEY && !/^[\x21-\x7E]+$/.test(KEY)) { alert("API key mein invalid special character hai. Google AI Studio se key dobara copy karein."); return; }
+    if(KEY && !/^[\x21-\x7E]+$/.test(KEY)) { alert("API key has an invalid special character. Please copy the key again from Google AI Studio."); return; }
     store.set("ik_gemini_key",KEY); store.set("bodam_model",MODEL); store.set("ik_lang",LANG); store.set("ik_rate",RATE); store.set("ik_muted",muted?"1":"0"); store.set("bodam_voice_gender",VOICE_GENDER);
     syncSpk(); closePage(); $("said").textContent = "Settings saved. Active model: " + MODEL;
   };
@@ -987,7 +987,7 @@ function pageHelp(){
     <h3>Getting started</h3>
     <ul><li>Open <b>Settings</b> and paste your Gemini API key.</li><li>Tap the microphone button and speak.</li><li>Tap the keyboard button if you prefer to type.</li></ul>
     <h3>Things you can say</h3>
-    <div class="card">"Open YouTube" / "WhatsApp khol do"<br>"Kesariya song chala de YouTube pe"<br>"Female voice mein baat karo"<br>"Male voice mein baat karo"<br>"Search for best phones under 20000"<br>"What time is it?"<br>"Set a timer for 5 minutes"<br>"Explain how a rainbow forms"</div>
+    <div class="card">"Open YouTube" / "Open WhatsApp"<br>"Play the song Kesariya on YouTube"<br>"Talk in a female voice"<br>"Talk in a male voice"<br>"Search for best phones under 20000"<br>"What time is it?"<br>"Set a timer for 5 minutes"<br>"Explain how a rainbow forms"</div>
     <h3>Troubleshooting</h3>
     <ul>
       <li><b>Mic not working:</b> open BODAM using an HTTPS website in Chrome (not directly from Downloads/content://), then allow Microphone permission from the site settings.</li>
@@ -1286,8 +1286,8 @@ document.addEventListener("click", e => {
 });
 $("mic").onclick = () => {
   ensureAudio(); conversationMode = !conversationMode;
-  if(!conversationMode){ wakeOff(); abortListen(); stopSpeech(); setState("idle","Mic off. Dubara dabao to chalu."); }
-  else { wakeOn(); toast("Mic chalu: BODAM sunta rahega. Band karne ke liye mic dobara dabao."); listen(); }
+  if(!conversationMode){ wakeOff(); abortListen(); stopSpeech(); setState("idle","Mic off. Tap again to turn it on."); }
+  else { wakeOn(); toast("Mic on: BODAM will keep listening. Tap the mic again to turn it off."); listen(); }
 };
 $("stop").onclick = () => { conversationMode=false; wakeOff(); stopSpeech(); abortListen(); setState("idle"); };
 $("spk").onclick = () => { muted = !muted; store.set("ik_muted", muted?"1":"0"); syncSpk(); if(muted) stopSpeech(); };
@@ -1356,7 +1356,7 @@ const jget = (k,d) => { try{ return JSON.parse(store.get(k,"") || JSON.stringify
 let memories = jget("bodam_memory",[]), notes = jget("bodam_notes",[]), charId = store.get("bodam_char","default");
 const CHARS = {
   default:["Default",""],
-  friend:["Caring friend","Talk like a warm, caring close friend. Show emotion, ask gently how the user feels, speak natural Hinglish."],
+  friend:["Caring friend","Talk like a warm, caring close friend. Show emotion, ask gently how the user feels, speak natural English."],
   mentor:["Mentor","Talk like a wise, motivating mentor who gives clear, practical guidance."],
   funny:["Funny buddy","Talk like a witty buddy with light, friendly jokes. Never be rude."]
 };
@@ -1370,11 +1370,11 @@ const saveMem = () => store.set("bodam_memory", JSON.stringify(memories));
 const saveNotes = () => store.set("bodam_notes", JSON.stringify(notes));
 function featureCommand(q){
   const t = q.toLowerCase().trim(); let m;
-  if(m = t.match(/^(?:yaad rakh(?:na|o)?|remember(?: that)?)[\s:,-]+(.+)/)){ memories.push(m[1].trim()); saveMem(); return "Theek hai, yaad rakh lunga: " + m[1].trim(); }
-  if(m = t.match(/^(?:note (?:kar(?:o|na)?|likh(?:o)?)|add note|note down|note)[\s:,-]+(.+)/)){ notes.push({t:m[1].trim(), d:Date.now()}); saveNotes(); return "Note save kar diya."; }
-  if(/(my memory|meri memory|kya yaad hai|what do you remember)/.test(t)){ pageMemory(); return memories.length ? "Teri memory khol di." : "Abhi kuch yaad nahi hai. Bolo: yaad rakh, aur baat."; }
+  if(m = t.match(/^(?:yaad rakh(?:na|o)?|remember(?: that)?)[\s:,-]+(.+)/)){ memories.push(m[1].trim()); saveMem(); return "Okay, I will remember: " + m[1].trim(); }
+  if(m = t.match(/^(?:note (?:kar(?:o|na)?|likh(?:o)?)|add note|note down|note)[\s:,-]+(.+)/)){ notes.push({t:m[1].trim(), d:Date.now()}); saveNotes(); return "Note saved."; }
+  if(/(my memory|meri memory|kya yaad hai|what do you remember)/.test(t)){ pageMemory(); return memories.length ? "Opened your memory." : "Nothing remembered yet. Say: remember, followed by what to remember."; }
   if(/(mere notes|my notes|notes dikha)/.test(t)){ pageNotes(); return "Ye rahe tere notes."; }
-  if(/\b(news|khabar|khabrein|samachar)\b/.test(t)){ pageNews(); return "Latest news khol raha hoon."; }
+  if(/\b(news|khabar|khabrein|samachar)\b/.test(t)){ pageNews(); return "Opening the latest news."; }
   return null;
 }
 function listPage(title, arr, render, onDel, onClear, hint){
@@ -1382,14 +1382,14 @@ function listPage(title, arr, render, onDel, onClear, hint){
   document.querySelectorAll("#pbody .lDel").forEach(b => b.onclick = () => { onDel(+b.dataset.i); });
   const c = $("lClear"); if(c) c.onclick = onClear;
 }
-function pageMemory(){ listPage("Memory", memories, x => esc(x), i => { memories.splice(i,1); saveMem(); pageMemory(); }, () => { memories = []; saveMem(); pageMemory(); }, 'Nothing saved yet. Say "yaad rakh mera naam Imran hai".'); }
-function pageNotes(){ listPage("Notes", notes, x => esc(x.t), i => { notes.splice(i,1); saveNotes(); pageNotes(); }, () => { notes = []; saveNotes(); pageNotes(); }, 'No notes yet. Say "note karo kal doodh lana hai".'); }
+function pageMemory(){ listPage("Memory", memories, x => esc(x), i => { memories.splice(i,1); saveMem(); pageMemory(); }, () => { memories = []; saveMem(); pageMemory(); }, 'Nothing saved yet. Say "remember my name is Imran".'); }
+function pageNotes(){ listPage("Notes", notes, x => esc(x.t), i => { notes.splice(i,1); saveNotes(); pageNotes(); }, () => { notes = []; saveNotes(); pageNotes(); }, 'No notes yet. Say "note: buy milk tomorrow".'); }
 function pageCharacter(){
   openPage("Character", `<p style="margin-bottom:12px">Choose how BODAM talks to you.</p>` + Object.keys(CHARS).map(k => `<button class="obBtn chBtn" data-k="${k}" style="margin-bottom:10px;${k===charId?"outline:2px solid #4a86ff":""}">${CHARS[k][0]}</button>`).join(""));
   document.querySelectorAll("#pbody .chBtn").forEach(b => b.onclick = () => { charId = b.dataset.k; store.set("bodam_char", charId); closePage(); toast("Character: " + CHARS[charId][0]); });
 }
 function pageSkills(){
-  openPage("Skills", ["Open apps and websites: 'WhatsApp khol do'","Play songs on YouTube: 'Kesariya chala de'","Google search and Maps","Timer: '5 minute ka timer'","Time: 'kitne baje hain'","Memory: 'yaad rakh mera naam Imran hai'","Notes: 'note karo kal doodh lana hai'","News: 'aaj ki news'","Voice character: Core, Female, Male","Character personality: Settings menu, Character"].map(x => `<div class="newsI">${esc(x)}</div>`).join(""));
+  openPage("Skills", ["Open apps and websites: 'Open WhatsApp'","Play songs on YouTube: 'Play Kesariya'","Google search and Maps","Timer: 'Set a timer for 5 minutes'","Time: 'What time is it?'","Memory: 'Remember my name is Imran'","Notes: 'Note: buy milk tomorrow'","News: 'Today\'s news'","Voice character: Core, Female, Male","Character personality: Settings menu, Character"].map(x => `<div class="newsI">${esc(x)}</div>`).join(""));
 }
 async function pageNews(){
   openPage("News", `<div id="newsBox">Loading latest headlines…</div>`);
@@ -1443,7 +1443,7 @@ async function spkLoop(my){
   }
   if(my === ttsToken){
     spkRun = false;
-    if(spkFail && !spkPlayed) setState("idle", "Voice abhi busy hai, jawab screen par likha hai.");
+    if(spkFail && !spkPlayed) setState("idle", "Voice is busy right now, the reply is written on screen.");
     else setState("idle");
     resumeConversation();
   }
@@ -1496,7 +1496,7 @@ async function ttsBuffer(text, emo){
 async function replyStream(q){
   KEY = cleanApiKey(KEY);
   if(!KEY) throw new Error("Please add your Gemini API key in Settings.");
-  if(!/^[\x21-\x7E]+$/.test(KEY)) throw new Error("API key mein invalid hidden/special character hai. Settings mein key dobara paste karein.");
+  if(!/^[\x21-\x7E]+$/.test(KEY)) throw new Error("API key has an invalid hidden/special character. Please paste the key again in Settings.");
   const img = camFrame();
   const parts = [{ text:q }];
   if(img) parts.push({ inlineData:{ mimeType:"image/jpeg", data:img } });
@@ -1520,7 +1520,7 @@ async function replyStream(q){
     $("said").textContent = spoken;
     if(useG && !firstDone){
       const mm = spoken.match(/[.!?।]+(\s|$)|\n/);
-      if(mm && mm.index >= 6){ const end = mm.index + mm[0].length; spkAdd(spoken.slice(0, end), emo); sentUpTo = end; firstDone = true; setState("thinking", "Voice ban rahi hai…"); }
+      if(mm && mm.index >= 6){ const end = mm.index + mm[0].length; spkAdd(spoken.slice(0, end), emo); sentUpTo = end; firstDone = true; setState("thinking", "Preparing voice…"); }
     }
   };
   const eat = line => {
@@ -1549,13 +1549,13 @@ async function replyStream(q){
 let camOn = false, camStream = null, camFacing = "environment";
 async function camStart(){
   if(camOn) return true;
-  if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ toast("Camera ke liye https link chahiye"); return false; }
+  if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ toast("Camera needs an https link"); return false; }
   try{
     camStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:camFacing, width:{ideal:640}, height:{ideal:480} }, audio:false });
-  }catch(e){ toast("Camera permission block hai. Chrome site settings me allow karo."); return false; }
+  }catch(e){ toast("Camera permission is blocked. Allow it in Chrome site settings."); return false; }
   $("camVid").srcObject = camStream;
   try{ await $("camVid").play(); }catch(e){}
-  camOn = true; $("camBtn").classList.add("act"); $("camFlip").classList.add("show"); toast("Camera on: BODAM ab dekh sakta hai");
+  camOn = true; $("camBtn").classList.add("act"); $("camFlip").classList.add("show"); toast("Camera on: BODAM can see now");
   return true;
 }
 function camStop(){
